@@ -1,10 +1,15 @@
 import { Link } from 'react-router-dom'
 import './Credentials.scss'
 import { useState } from 'react'
+// import { ReactComponent as ProfileIcon } from '../assets/react.svg'
 
 export function Login() {
 	const [isError, setIsError] = useState<boolean>(false)
 	const [errorBoxText, setErrorBoxText] = useState<string>()
+	const [currentFormState, setCurrentFormState] = useState({
+		username: '',
+		password: '',
+	})
 
 	function loginUser() {
 		const username = (
@@ -48,23 +53,62 @@ export function Login() {
 				console.log(data.token)
 			})
 	}
-	return (
-		<div className='authentication'>
-			<h2>Login!</h2>
-			<div className='credentials'>
-				<div className='username-container'>
-					<label htmlFor='username'>Username</label>
-					<input type='text' id='username' />
-				</div>
-				<div className='password-container'>
-					<label htmlFor='password'>Password</label>
-					<input type='text' id='password' />
-				</div>
-			</div>
-			<button onClick={loginUser}>LOGIN</button>
-			{isError && <div className='errorbox'>{errorBoxText}</div>}
 
-			<Link to='/authentication/create-account'>Create account</Link>
+	function handleUsernameChange(e: React.ChangeEvent<HTMLInputElement>) {
+		const inputNode = e.target as HTMLInputElement
+		setCurrentFormState((prev) => ({ ...prev, username: inputNode.value }))
+	}
+	function handlePasswordChange(e: React.ChangeEvent<HTMLInputElement>) {
+		const inputNode = e.target as HTMLInputElement
+		setCurrentFormState((prev) => ({ ...prev, password: inputNode.value }))
+	}
+
+	return (
+		<div className='login-account'>
+			<h2>Log in</h2>
+			<div className='credentials'>
+				<div className='form-input-container'>
+					<label htmlFor='username-input'>Your username</label>
+					<label htmlFor='username-input'>
+						<div className='input-text-container'>
+							<div className='img-container'>
+								<img src='/assets/profile.svg' />
+							</div>
+							<input
+								type='text'
+								id='username-input'
+								onBlur={handleUsernameChange}
+							/>
+						</div>
+					</label>
+				</div>
+				<div className='form-input-container'>
+					<label htmlFor='password-input'>Your password</label>
+					<label htmlFor='password-input'>
+						<div className='input-text-container'>
+							<div className='img-container'>
+								<img src='/assets/password.svg' />
+							</div>
+							<input
+								type='password'
+								id='password-input'
+								onBlur={handlePasswordChange}
+							/>
+						</div>
+					</label>
+				</div>
+
+				<button onClick={loginUser}>LOGIN</button>
+				<hr />
+
+				<Link
+					to='/authentication/create-account'
+					className='button-like'
+				>
+					CREATE ACCOUNT
+				</Link>
+			</div>
+			{isError && <div className='errorbox'>{errorBoxText}</div>}
 		</div>
 	)
 }
