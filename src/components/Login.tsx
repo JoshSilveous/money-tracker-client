@@ -1,24 +1,51 @@
 import { Link } from 'react-router-dom'
 import './Credentials.scss'
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import { ReactComponent as UsernameIcon } from '../assets/profile.svg'
 import { ReactComponent as PasswordIcon } from '../assets/password.svg'
 
 export function Login() {
-	const [isError, setIsError] = useState<boolean>(false)
-	const [errorBoxText, setErrorBoxText] = useState<string>()
-	const [currentFormState, setCurrentFormState] = useState({
-		username: '',
-		password: '',
-	})
+	const usernameInputRef = useRef<HTMLInputElement>(null)
+	const passwordInputRef = useRef<HTMLInputElement>(null)
+	const statusDivRef = useRef<HTMLDivElement>(null)
+
+	const MAX_INPUT_LENGTH = 30
+	const MIN_INPUT_LENGTH = 8
+
+	function setStatus(error: boolean, statusText: string) {
+		if (error) {
+			statusDivRef.current!.classList.add('error')
+		} else {
+			statusDivRef.current!.classList.remove('error')
+		}
+		statusDivRef.current!.innerText = statusText
+	}
+	function setErrors(errorUsername: boolean, errorPassword: boolean) {
+		if (errorUsername) {
+			usernameInputRef.current!.parentElement!.classList.add('error')
+		} else {
+			usernameInputRef.current!.parentElement!.classList.remove('error')
+		}
+		if (errorPassword) {
+			passwordInputRef.current!.parentElement!.classList.add('error')
+		} else {
+			passwordInputRef.current!.parentElement!.classList.remove('error')
+		}
+	}
 
 	function loginUser() {
-		const username = (
-			document.getElementById('username') as HTMLInputElement
-		).value
-		const password = (
-			document.getElementById('password') as HTMLInputElement
-		).value
+		const username = usernameInputRef.current!.value
+		const password = passwordInputRef.current!.value
+
+		if (username.length === 0 && password.length === 0) {
+			setErrors(true, true)
+		} else if (username.length === 0) {
+			setErrors(true, false)
+		} else if (password.length === 0) {
+			setErrors(false, true)
+		} else {
+			setErrors(false, false)
+		}
 
 		const apiUrl = 'http://localhost:3000/api/loginuser'
 		const data = {
@@ -37,16 +64,28 @@ export function Login() {
 		fetch(apiUrl, requestOptions)
 			.then((res) => {
 				if (res.ok) {
-					setIsError(false)
-					setErrorBoxText(res.statusText)
+					setErrors(false, false)
+					setStatus(
+						false,
+						'Login successful. Redirecting you shortly...'
+					)
 					return res.json()
 				} else {
-					setIsError(true)
-					if (res.statusText === 'ERROR_CREDENTIALS') {
-						setErrorBoxText(
-							'Credentials do not match an existing user.'
+					if (res.statusText === 'ERROR_INCORRECT_USERNAME') {
+						setErrors(true, false)
+						setStatus(
+							true,
+							`Username "${username}" doesn't exist in our database.`
 						)
-						throw new Error(res.statusText)
+					} else if (res.statusText === 'ERROR_INCORRECT_PASSWORD') {
+						setErrors(false, true)
+						setStatus(true, 'Incorrect password.')
+					} else {
+						setErrors(false, false)
+						setStatus(
+							true,
+							`Unexpected server error: ${res.statusText}`
+						)
 					}
 				}
 			})
@@ -55,13 +94,33 @@ export function Login() {
 			})
 	}
 
-	function handleUsernameChange(e: React.ChangeEvent<HTMLInputElement>) {
+	// Front-end input cleaning
+	function validateInput(e: React.ChangeEvent<HTMLInputElement>) {
 		const inputNode = e.target as HTMLInputElement
-		setCurrentFormState((prev) => ({ ...prev, username: inputNode.value }))
-	}
-	function handlePasswordChange(e: React.ChangeEvent<HTMLInputElement>) {
-		const inputNode = e.target as HTMLInputElement
-		setCurrentFormState((prev) => ({ ...prev, password: inputNode.value }))
+		let error = false
+
+		if (inputNode.value.length > MAX_INPUT_LENGTH) {
+			inputNode.value = inputNode.value.slice(0, MAX_INPUT_LENGTH)
+			error = true
+		}
+
+		const cleanedValue = inputNode.value.replace(
+			/[!@#$%^&*(){}[\]<>\/\\'\"|?=+~`:,; \t\n\r]/g,
+			''
+		)
+		if (inputNode.value !== cleanedValue) {
+			inputNode.value = cleanedValue
+			error = true
+		}
+
+		if (error) {
+			inputNode.parentElement!.classList.add('error')
+			setTimeout(() => {
+				inputNode.parentElement!.classList.remove('error')
+			}, 1000)
+		}
+
+		inputNode.value = cleanedValue
 	}
 
 	return (
@@ -78,7 +137,8 @@ export function Login() {
 							<input
 								type='text'
 								id='username-input'
-								onBlur={handleUsernameChange}
+								onChange={validateInput}
+								ref={usernameInputRef}
 							/>
 						</div>
 					</label>
@@ -93,12 +153,14 @@ export function Login() {
 							<input
 								type='password'
 								id='password-input'
-								onBlur={handlePasswordChange}
+								onChange={validateInput}
+								ref={passwordInputRef}
 							/>
 						</div>
 					</label>
 				</div>
 
+				<div className='status-text' ref={statusDivRef} />
 				<button onClick={loginUser}>LOGIN</button>
 				<hr />
 
@@ -109,7 +171,6 @@ export function Login() {
 					CREATE ACCOUNT
 				</Link>
 			</div>
-			{isError && <div className='errorbox'>{errorBoxText}</div>}
 		</div>
 	)
 }
