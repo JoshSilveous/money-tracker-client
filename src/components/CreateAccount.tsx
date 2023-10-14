@@ -123,8 +123,10 @@ export function CreateAccount() {
 		})
 	}
 
-	// Front-end input cleaning
-	function validateInput(e: React.ChangeEvent<HTMLInputElement>) {
+	// Front-end input cleaning. This is verified on the back-end as well.
+	const USERNAME_FILTER = /[!@#$%^&*(){}[\]<>\/\\'\"|?=+~`:,; \t\n\r]/g
+	const PASSWORD_FILTER = /[/'"`,\\]/g
+	function filterUsername(e: React.ChangeEvent<HTMLInputElement>) {
 		const inputNode = e.target as HTMLInputElement
 		let error = false
 
@@ -133,10 +135,31 @@ export function CreateAccount() {
 			error = true
 		}
 
-		const cleanedValue = inputNode.value.replace(
-			/[!@#$%^&*(){}[\]<>\/\\'\"|?=+~`:,; \t\n\r]/g,
-			''
-		)
+		const cleanedValue = inputNode.value.replace(USERNAME_FILTER, '')
+		if (inputNode.value !== cleanedValue) {
+			inputNode.value = cleanedValue
+			error = true
+		}
+
+		if (error) {
+			inputNode.parentElement!.classList.add('error')
+			setTimeout(() => {
+				inputNode.parentElement!.classList.remove('error')
+			}, 1000)
+		}
+
+		inputNode.value = cleanedValue
+	}
+	function filterPassword(e: React.ChangeEvent<HTMLInputElement>) {
+		const inputNode = e.target as HTMLInputElement
+		let error = false
+
+		if (inputNode.value.length > MAX_INPUT_LENGTH) {
+			inputNode.value = inputNode.value.slice(0, MAX_INPUT_LENGTH)
+			error = true
+		}
+
+		const cleanedValue = inputNode.value.replace(PASSWORD_FILTER, '')
 		if (inputNode.value !== cleanedValue) {
 			inputNode.value = cleanedValue
 			error = true
@@ -166,7 +189,7 @@ export function CreateAccount() {
 							<input
 								type='text'
 								id='username-input'
-								onChange={validateInput}
+								onChange={filterUsername}
 								ref={usernameInputRef}
 							/>
 						</div>
@@ -182,7 +205,7 @@ export function CreateAccount() {
 							<input
 								type='password'
 								id='password-input'
-								onChange={validateInput}
+								onChange={filterPassword}
 								ref={passwordInputRef}
 							/>
 						</div>
@@ -200,7 +223,7 @@ export function CreateAccount() {
 							<input
 								type='password'
 								id='passwordconfirm-input'
-								onChange={validateInput}
+								onChange={filterPassword}
 								ref={passwordConfirmInputRef}
 							/>
 						</div>
