@@ -97,6 +97,10 @@ body {
 		&:hover {
 			background-image: var(--pretty_button_background_hover);
 		}
+		&:focus {
+			outline: 2px solid var(--input_border_focus_color);
+			box-shadow: var(--input_border_focus_boxshadow);
+		}
 	}
 	a.button-like {
 		background-color: var(--button_background_color);
@@ -104,6 +108,10 @@ body {
 		color: var(--button_text_color);
 		&:hover {
 			background-color: var(--button_background_color_hover);
+		}
+		&:focus {
+			outline: 2px solid var(--input_border_focus_color);
+			box-shadow: var(--input_border_focus_boxshadow);
 		}
 	}
 
