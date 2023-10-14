@@ -1,7 +1,8 @@
 import { Link } from 'react-router-dom'
 import './Credentials.scss'
 import { useState } from 'react'
-// import { ReactComponent as ProfileIcon } from '../assets/react.svg'
+import { ReactComponent as UsernameIcon } from '../assets/profile.svg'
+import { ReactComponent as PasswordIcon } from '../assets/password.svg'
 
 export function Login() {
 	const [isError, setIsError] = useState<boolean>(false)
@@ -71,8 +72,8 @@ export function Login() {
 					<label htmlFor='username-input'>Your username</label>
 					<label htmlFor='username-input'>
 						<div className='input-text-container'>
-							<div className='img-container'>
-								<img src='/assets/profile.svg' />
+							<div className='svg-container'>
+								<UsernameIcon />
 							</div>
 							<input
 								type='text'
@@ -86,8 +87,8 @@ export function Login() {
 					<label htmlFor='password-input'>Your password</label>
 					<label htmlFor='password-input'>
 						<div className='input-text-container'>
-							<div className='img-container'>
-								<img src='/assets/password.svg' />
+							<div className='svg-container'>
+								<PasswordIcon />
 							</div>
 							<input
 								type='password'
