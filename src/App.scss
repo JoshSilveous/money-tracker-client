@@ -30,7 +30,7 @@ body {
 				background-color: rgb(255, 225, 225);
 			}
 
-			.img-container {
+			.svg-container {
 				border-right: 2px solid rgb(255, 195, 195);
 			}
 		}
@@ -50,17 +50,26 @@ body {
 			outline: none;
 		}
 
-		.img-container {
+		.svg-container {
 			display: flex;
 			align-items: center;
 			justify-content: center;
 			height: 100%;
 			min-width: 40px;
 			border-right: 2px solid #f9f9f9;
-			& > img {
+			& > svg {
 				height: 20px;
+				width: 20px;
 			}
 		}
+	}
+}
+.status-text {
+	font-size: 14px;
+	font-weight: 500;
+	color: darkgreen;
+	&.error {
+		color: darkred;
 	}
 }
 
