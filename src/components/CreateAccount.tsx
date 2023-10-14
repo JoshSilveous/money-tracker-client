@@ -1,32 +1,94 @@
 import { Link } from 'react-router-dom'
 import './Credentials.scss'
-import { useState } from 'react'
+import { useRef } from 'react'
+import { ReactComponent as UsernameIcon } from '../assets/profile.svg'
+import { ReactComponent as PasswordIcon } from '../assets/password.svg'
 
 export function CreateAccount() {
-	const [currentFormState, setCurrentFormState] = useState({
-		username: { value: '', error: false },
-		password: { value: '', error: false },
-		passwordConfirm: { value: '', error: false },
-	})
-	const [statusText, setStatusText] = useState('')
+	const usernameInputRef = useRef<HTMLInputElement>(null)
+	const passwordInputRef = useRef<HTMLInputElement>(null)
+	const passwordConfirmInputRef = useRef<HTMLInputElement>(null)
+	const statusDivRef = useRef<HTMLDivElement>(null)
+
+	const MAX_INPUT_LENGTH = 30
+	const MIN_INPUT_LENGTH = 8
+
+	function setStatus(error: boolean, statusText: string) {
+		if (error) {
+			statusDivRef.current!.classList.add('error')
+		} else {
+			statusDivRef.current!.classList.remove('error')
+		}
+		statusDivRef.current!.innerText = statusText
+	}
+	function setErrors(
+		errorUsername: boolean,
+		errorPassword: boolean,
+		errorPasswordConfirm: boolean
+	) {
+		if (errorUsername) {
+			usernameInputRef.current!.parentElement!.classList.add('error')
+		} else {
+			usernameInputRef.current!.parentElement!.classList.remove('error')
+		}
+		if (errorPassword) {
+			passwordInputRef.current!.parentElement!.classList.add('error')
+		} else {
+			passwordInputRef.current!.parentElement!.classList.remove('error')
+		}
+		if (errorPasswordConfirm) {
+			passwordConfirmInputRef.current!.parentElement!.classList.add(
+				'error'
+			)
+		} else {
+			passwordConfirmInputRef.current!.parentElement!.classList.remove(
+				'error'
+			)
+		}
+	}
 
 	function createUser() {
+		// Check if password matches confirmation
 		if (
-			currentFormState.password.value !==
-			currentFormState.passwordConfirm.value
+			passwordInputRef.current!.value !==
+			passwordConfirmInputRef.current!.value
 		) {
-			console.log('no match')
-			setStatusText('Password confirmation does not match.')
-			console.log(currentFormState)
+			setStatus(true, "Password doesn't match password confirmation.")
+			setErrors(false, true, true)
 			return
+		} else {
+			setErrors(false, false, false)
 		}
 
+		// Check username length minimum
+		if (usernameInputRef.current!.value.length <= MIN_INPUT_LENGTH) {
+			setErrors(true, false, false)
+			setStatus(
+				true,
+				`Username must be more than ${MIN_INPUT_LENGTH} characters in length.`
+			)
+			return
+		} else {
+			setErrors(false, false, false)
+		}
+		// Check password length minimum
+		if (passwordInputRef.current!.value.length <= MIN_INPUT_LENGTH) {
+			setErrors(false, true, false)
+			setStatus(
+				true,
+				`Password must be more than ${MIN_INPUT_LENGTH} characters in length.`
+			)
+			return
+		} else {
+			setErrors(false, false, false)
+		}
+
+		// Make API Call
 		const apiUrl = 'http://localhost:3000/api/createuser'
 		const data = {
-			username: currentFormState.username.value,
-			password: currentFormState.password.value,
+			username: usernameInputRef.current!.value,
+			password: passwordInputRef.current!.value,
 		}
-
 		const headers = {
 			'Content-Type': 'application/json',
 		}
@@ -38,81 +100,50 @@ export function CreateAccount() {
 
 		fetch(apiUrl, requestOptions).then((res) => {
 			if (res.ok) {
-				setStatusText('Account created.')
+				setStatus(false, 'Account created.')
+				setErrors(false, false, false)
 			} else {
-				if (res.statusText === 'ERROR_DUPLICATE_PASSWORD') {
-					setStatusText(
-						'Password already exists, please pick another.'
-					)
-				} else if (res.statusText === 'ERROR_DUPLICATE_USERNAME') {
-					setStatusText(
+				if (res.statusText === 'ERROR_DUPLICATE_USERNAME') {
+					setStatus(
+						true,
 						'Username already exists, please pick another.'
 					)
+					setErrors(true, false, false)
 				} else {
-					setStatusText(res.statusText)
+					setErrors(false, false, false)
+					setStatus(true, res.statusText)
 				}
 			}
 		})
 	}
 
-	function handleUsernameBlur(e: React.ChangeEvent<HTMLInputElement>) {
+	// Front-end input cleaning
+	function validateInput(e: React.ChangeEvent<HTMLInputElement>) {
 		const inputNode = e.target as HTMLInputElement
-		setCurrentFormState((prev) => ({
-			...prev,
-			username: {
-				value: inputNode.value,
-				error: prev.username.error,
-			},
-		}))
-	}
-	function handlePasswordBlur(e: React.ChangeEvent<HTMLInputElement>) {
-		const inputNode = e.target as HTMLInputElement
-		setCurrentFormState((prev) => ({
-			...prev,
-			password: {
-				value: inputNode.value,
-				error: prev.password.error,
-			},
-		}))
-	}
-	function handlePasswordConfirmChange(
-		e: React.ChangeEvent<HTMLInputElement>
-	) {
-		const inputNode = e.target as HTMLInputElement
-		if (
-			!currentFormState.passwordConfirm.error &&
-			inputNode.value !== currentFormState.password.value
-		) {
-			setCurrentFormState((prev) => ({
-				...prev,
-				passwordConfirm: {
-					value: inputNode.value,
-					error: true,
-				},
-			}))
-		} else if (
-			currentFormState.passwordConfirm.error &&
-			inputNode.value === currentFormState.password.value
-		) {
-			setCurrentFormState((prev) => ({
-				...prev,
-				passwordConfirm: {
-					value: inputNode.value,
-					error: false,
-				},
-			}))
-		}
-	}
+		let error = false
 
-	function handlePasswordConfirmBlur(e: React.ChangeEvent<HTMLInputElement>) {
-		const inputNode = e.target as HTMLInputElement
-		setCurrentFormState((prev) => ({
-			...prev,
-			passwordConfirm: {
-				value: inputNode.value,
-				error: prev.passwordConfirm.error,
-			},
-		}))
+		if (inputNode.value.length > MAX_INPUT_LENGTH) {
+			inputNode.value = inputNode.value.slice(0, MAX_INPUT_LENGTH)
+			error = true
+		}
+
+		const cleanedValue = inputNode.value.replace(
+			/[!@#$%^&*(){}[\]<>\/\\'\"|?=+~`:,; \t\n\r]/g,
+			''
+		)
+		if (inputNode.value !== cleanedValue) {
+			inputNode.value = cleanedValue
+			error = true
+		}
+
+		if (error) {
+			inputNode.parentElement!.classList.add('error')
+			setTimeout(() => {
+				inputNode.parentElement!.classList.remove('error')
+			}, 1000)
+		}
+
+		inputNode.value = cleanedValue
 	}
 
 	return (
@@ -122,18 +153,15 @@ export function CreateAccount() {
 				<div className='form-input-container'>
 					<label htmlFor='username-input'>Your username</label>
 					<label htmlFor='username-input'>
-						<div
-							className={`input-text-container ${
-								currentFormState.username.error ? 'error' : ''
-							}`}
-						>
-							<div className='img-container'>
-								<img src='/assets/profile.svg' />
+						<div className='input-text-container'>
+							<div className='svg-container'>
+								<UsernameIcon />
 							</div>
 							<input
 								type='text'
 								id='username-input'
-								onBlur={handleUsernameBlur}
+								onChange={validateInput}
+								ref={usernameInputRef}
 							/>
 						</div>
 					</label>
@@ -141,18 +169,15 @@ export function CreateAccount() {
 				<div className='form-input-container'>
 					<label htmlFor='password-input'>Your password</label>
 					<label htmlFor='password-input'>
-						<div
-							className={`input-text-container ${
-								currentFormState.password.error ? 'error' : ''
-							}`}
-						>
-							<div className='img-container'>
-								<img src='/assets/password.svg' />
+						<div className='input-text-container'>
+							<div className='svg-container'>
+								<PasswordIcon />
 							</div>
 							<input
 								type='password'
 								id='password-input'
-								onBlur={handlePasswordBlur}
+								onChange={validateInput}
+								ref={passwordInputRef}
 							/>
 						</div>
 					</label>
@@ -162,27 +187,21 @@ export function CreateAccount() {
 						Confirm your password
 					</label>
 					<label htmlFor='passwordconfirm-input'>
-						<div
-							className={`input-text-container ${
-								currentFormState.passwordConfirm.error
-									? 'error'
-									: ''
-							}`}
-						>
-							<div className='img-container'>
-								<img src='/assets/password.svg' />
+						<div className='input-text-container'>
+							<div className='svg-container'>
+								<PasswordIcon />
 							</div>
 							<input
 								type='password'
 								id='passwordconfirm-input'
-								onChange={handlePasswordConfirmChange}
-								onBlur={handlePasswordConfirmBlur}
+								onChange={validateInput}
+								ref={passwordConfirmInputRef}
 							/>
 						</div>
 					</label>
 				</div>
 
-				<div id='status'>{statusText}</div>
+				<div className='status-text' ref={statusDivRef} />
 				<button onClick={createUser}>CREATE ACCOUNT</button>
 				<hr />
 
