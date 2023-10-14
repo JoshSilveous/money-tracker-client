@@ -1,0 +1,64 @@
+@media (prefers-color-scheme: light) {
+	body {
+		--background_color: #fffcf8;
+		--text_color: #213547;
+		--input_label_color: #727376;
+		--input_border_color: #c7c7c8;
+		--input_border_focus_color: #7c8083;
+		--input_border_focus_boxshadow: 0px 0px 5px 0px #cacaca;
+		--input_border_error_color: #830000;
+		--input_text_color: #000000;
+		--input_body_color: #ffffff;
+		--input_body_error_color: #ffe1e1;
+		--input_divider_color: #f9f9f9;
+		--input_divider_error_color: #ffc3c3;
+		--form_status_color: #006400;
+		--form_status_error_color: #8b0000;
+
+		--pretty_button_background: linear-gradient(to right, #1ba10a, #0fc54b);
+		--pretty_button_background_hover: linear-gradient(
+			to right,
+			#2baa1a,
+			#22cf5c
+		);
+		--pretty_button_text_color: #ffffff;
+		--button_text_color: #7c8083;
+		--button_background_color: #ebebeb;
+		--button_background_color_hover: #dfdfdf;
+
+		--auth_card_background_color: #ffffff;
+		--auth_card_boxshadow: 0px 0px 10px 0px #cacaca;
+	}
+}
+@media (prefers-color-scheme: dark) {
+	body {
+		--background_color: #213547;
+		--text_color: #fffcf8;
+		--input_label_color: #ccd8df;
+		--input_border_color: #274055;
+		--input_border_focus_color: #213547; //
+		--input_border_focus_boxshadow: 0px 0px 5px 0px #213547;
+		--input_border_error_color: #5e2a2a;
+		--input_text_color: #ffffff;
+		--input_body_color: #55738b;
+		--input_body_error_color: #9b6e6e;
+		--input_divider_color: #213547;
+		--input_divider_error_color: #5e2a2a;
+		--form_status_color: #8bd48b;
+		--form_status_error_color: #db7a7a;
+
+		--pretty_button_background: linear-gradient(to right, #1ba10a, #0fc54b);
+		--pretty_button_background_hover: linear-gradient(
+			to right,
+			#2baa1a,
+			#22cf5c
+		);
+		--pretty_button_text_color: #ffffff;
+		--button_text_color: #d8dee2;
+		--button_background_color: #5e798f;
+		--button_background_color_hover: #718a9e;
+
+		--auth_card_background_color: #385064;
+		--auth_card_boxshadow: 0px 0px 10px 0px #132230;
+	}
+}
