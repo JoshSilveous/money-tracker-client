@@ -1,12 +1,12 @@
 import { Link } from 'react-router-dom'
-import './Credentials.scss'
-import { useRef, useState } from 'react'
-import { ReactComponent as UsernameIcon } from '../assets/profile.svg'
-import { ReactComponent as PasswordIcon } from '../assets/password.svg'
+import { useRef } from 'react'
+import { ReactComponent as UsernameIcon } from '../../assets/profile.svg'
+import { ReactComponent as PasswordIcon } from '../../assets/password.svg'
 
-export function Login() {
+export function CreateAccount() {
 	const usernameInputRef = useRef<HTMLInputElement>(null)
 	const passwordInputRef = useRef<HTMLInputElement>(null)
+	const passwordConfirmInputRef = useRef<HTMLInputElement>(null)
 	const statusDivRef = useRef<HTMLDivElement>(null)
 
 	const MAX_INPUT_LENGTH = 30
@@ -20,7 +20,11 @@ export function Login() {
 		}
 		statusDivRef.current!.innerText = statusText
 	}
-	function setErrors(errorUsername: boolean, errorPassword: boolean) {
+	function setErrors(
+		errorUsername: boolean,
+		errorPassword: boolean,
+		errorPasswordConfirm: boolean
+	) {
 		if (errorUsername) {
 			usernameInputRef.current!.parentElement!.classList.add('error')
 		} else {
@@ -31,26 +35,58 @@ export function Login() {
 		} else {
 			passwordInputRef.current!.parentElement!.classList.remove('error')
 		}
+		if (errorPasswordConfirm) {
+			passwordConfirmInputRef.current!.parentElement!.classList.add(
+				'error'
+			)
+		} else {
+			passwordConfirmInputRef.current!.parentElement!.classList.remove(
+				'error'
+			)
+		}
 	}
 
-	function loginUser() {
-		const username = usernameInputRef.current!.value
-		const password = passwordInputRef.current!.value
-
-		if (username.length === 0 && password.length === 0) {
-			setErrors(true, true)
-		} else if (username.length === 0) {
-			setErrors(true, false)
-		} else if (password.length === 0) {
-			setErrors(false, true)
+	function createUser() {
+		// Check if password matches confirmation
+		if (
+			passwordInputRef.current!.value !==
+			passwordConfirmInputRef.current!.value
+		) {
+			setStatus(true, "Password doesn't match password confirmation.")
+			setErrors(false, true, true)
+			return
 		} else {
-			setErrors(false, false)
+			setErrors(false, false, false)
 		}
 
-		const apiUrl = 'http://localhost:3000/api/loginuser'
+		// Check username length minimum
+		if (usernameInputRef.current!.value.length <= MIN_INPUT_LENGTH) {
+			setErrors(true, false, false)
+			setStatus(
+				true,
+				`Username must be more than ${MIN_INPUT_LENGTH} characters in length.`
+			)
+			return
+		} else {
+			setErrors(false, false, false)
+		}
+		// Check password length minimum
+		if (passwordInputRef.current!.value.length <= MIN_INPUT_LENGTH) {
+			setErrors(false, true, false)
+			setStatus(
+				true,
+				`Password must be more than ${MIN_INPUT_LENGTH} characters in length.`
+			)
+			return
+		} else {
+			setErrors(false, false, false)
+		}
+
+		// Make API Call
+		const apiUrl = 'http://localhost:3000/api/createuser'
 		const data = {
-			username: username,
-			password: password,
+			username: usernameInputRef.current!.value,
+			password: passwordInputRef.current!.value,
 		}
 		const headers = {
 			'Content-Type': 'application/json',
@@ -61,37 +97,29 @@ export function Login() {
 			body: JSON.stringify(data),
 		}
 
-		fetch(apiUrl, requestOptions)
-			.then((res) => {
-				if (res.ok) {
-					setErrors(false, false)
+		fetch(apiUrl, requestOptions).then((res) => {
+			if (res.ok) {
+				setStatus(false, 'Account created.')
+				setErrors(false, false, false)
+			} else {
+				if (res.statusText === 'ERROR_DUPLICATE_USERNAME') {
 					setStatus(
-						false,
-						'Login successful. Redirecting you shortly...'
+						true,
+						'Username already exists, please pick another.'
 					)
-					return res.json()
+					setErrors(true, false, false)
+				} else if (res.statusText === 'ERROR_REQUEST_FORMAT') {
+					setErrors(false, false, false)
+					setStatus(
+						true,
+						'Something went wrong with your request. Please contact support.'
+					)
 				} else {
-					if (res.statusText === 'ERROR_INCORRECT_USERNAME') {
-						setErrors(true, false)
-						setStatus(
-							true,
-							`Username "${username}" doesn't exist in our database.`
-						)
-					} else if (res.statusText === 'ERROR_INCORRECT_PASSWORD') {
-						setErrors(false, true)
-						setStatus(true, 'Incorrect password.')
-					} else {
-						setErrors(false, false)
-						setStatus(
-							true,
-							`Unexpected server error: ${res.statusText}`
-						)
-					}
+					setErrors(false, false, false)
+					setStatus(true, res.statusText)
 				}
-			})
-			.then((data) => {
-				console.log(data.token)
-			})
+			}
+		})
 	}
 
 	// Front-end input cleaning. This is verified on the back-end as well.
@@ -147,8 +175,8 @@ export function Login() {
 	}
 
 	return (
-		<div className='login-account'>
-			<h2>Log in</h2>
+		<div className='create-new-account'>
+			<h2>Create new account</h2>
 			<div className='credentials'>
 				<div className='form-input-container'>
 					<label htmlFor='username-input'>Your username</label>
@@ -182,16 +210,31 @@ export function Login() {
 						</div>
 					</label>
 				</div>
+				<div className='form-input-container'>
+					<label htmlFor='passwordconfirm-input'>
+						Confirm your password
+					</label>
+					<label htmlFor='passwordconfirm-input'>
+						<div className='input-text-container'>
+							<div className='svg-container'>
+								<PasswordIcon />
+							</div>
+							<input
+								type='password'
+								id='passwordconfirm-input'
+								onChange={filterPassword}
+								ref={passwordConfirmInputRef}
+							/>
+						</div>
+					</label>
+				</div>
 
 				<div className='status-text' ref={statusDivRef} />
-				<button onClick={loginUser}>LOGIN</button>
+				<button onClick={createUser}>CREATE ACCOUNT</button>
 				<hr />
 
-				<Link
-					to='/authentication/create-account'
-					className='button-like'
-				>
-					CREATE ACCOUNT
+				<Link to='/authentication/login' className='button-like'>
+					BACK TO LOG IN
 				</Link>
 			</div>
 		</div>
