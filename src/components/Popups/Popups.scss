@@ -1,0 +1,8 @@
+.new-category-popup {
+	display: flex;
+	flex-direction: column;
+	gap: 20px;
+	.status-text {
+		height: fit-content;
+	}
+}
