@@ -76,6 +76,7 @@ export function Login({ setSessionInfo }: LoginProps) {
 					)
 					return res.json()
 				} else {
+					throw new Error(res.statusText)
 					if (res.statusText === 'ERROR_INCORRECT_USERNAME') {
 						setErrors(true, false)
 						setStatus(
@@ -97,11 +98,35 @@ export function Login({ setSessionInfo }: LoginProps) {
 			.then((data) => {
 				setSessionInfo({ username: username, token: data.token })
 			})
+			.catch((err) => {
+				if (err.message === 'ERROR_INCORRECT_USERNAME') {
+					setErrors(true, false)
+					setStatus(
+						true,
+						`Username "${username}" doesn't exist in our database.`
+					)
+				} else if (err.message === 'ERROR_INCORRECT_PASSWORD') {
+					setErrors(false, true)
+					setStatus(true, 'Incorrect password.')
+				} else if (
+					err.message ===
+					'NetworkError when attempting to fetch resource.'
+				) {
+					setErrors(false, false)
+					setStatus(
+						true,
+						"Couldn't contact server. Our server may be down, or you might not have internet connection."
+					)
+				} else {
+					setErrors(false, false)
+					setStatus(true, `Unexpected server error: ${err.message}`)
+				}
+			})
 	}
 
 	// Front-end input cleaning. This is verified on the back-end as well.
 	const USERNAME_FILTER = /[!@#$%^&*(){}[\]<>\/\\'\"|?=+~`:,; \t\n\r]/g
-	const PASSWORD_FILTER = /[/'"`,\\]/g
+	const PASSWORD_FILTER = /[/'"`,\\ ]/g
 	function filterUsername(e: React.ChangeEvent<HTMLInputElement>) {
 		const inputNode = e.target as HTMLInputElement
 		let error = false

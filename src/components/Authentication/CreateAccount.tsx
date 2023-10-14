@@ -97,34 +97,47 @@ export function CreateAccount() {
 			body: JSON.stringify(data),
 		}
 
-		fetch(apiUrl, requestOptions).then((res) => {
-			if (res.ok) {
-				setStatus(false, 'Account created.')
-				setErrors(false, false, false)
-			} else {
-				if (res.statusText === 'ERROR_DUPLICATE_USERNAME') {
+		fetch(apiUrl, requestOptions)
+			.then((res) => {
+				if (res.ok) {
+					setStatus(false, 'Account created.')
+					setErrors(false, false, false)
+				} else {
+					throw new Error(res.statusText)
+				}
+			})
+			.catch((err) => {
+				if (err.message === 'ERROR_DUPLICATE_USERNAME') {
 					setStatus(
 						true,
 						'Username already exists, please pick another.'
 					)
 					setErrors(true, false, false)
-				} else if (res.statusText === 'ERROR_REQUEST_FORMAT') {
+				} else if (err.message === 'ERROR_REQUEST_FORMAT') {
 					setErrors(false, false, false)
 					setStatus(
 						true,
 						'Something went wrong with your request. Please contact support.'
 					)
+				} else if (
+					err.message ===
+					'NetworkError when attempting to fetch resource.'
+				) {
+					setErrors(false, false, false)
+					setStatus(
+						true,
+						"Couldn't contact server. Our server may be down, or you might not have internet connection."
+					)
 				} else {
 					setErrors(false, false, false)
-					setStatus(true, res.statusText)
+					setStatus(true, err.message)
 				}
-			}
-		})
+			})
 	}
 
 	// Front-end input cleaning. This is verified on the back-end as well.
 	const USERNAME_FILTER = /[!@#$%^&*(){}[\]<>\/\\'\"|?=+~`:,; \t\n\r]/g
-	const PASSWORD_FILTER = /[/'"`,\\]/g
+	const PASSWORD_FILTER = /[/'"`,\\ ]/g
 	function filterUsername(e: React.ChangeEvent<HTMLInputElement>) {
 		const inputNode = e.target as HTMLInputElement
 		let error = false
