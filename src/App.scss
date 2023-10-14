@@ -72,6 +72,41 @@ body {
 			}
 		}
 	}
+	.input-textarea-container {
+		display: flex;
+		align-items: center;
+		height: 80px;
+		border: 2px solid var(--input_border_color);
+		border-radius: 2px;
+
+		&.error {
+			border-color: var(--input_border_error_color);
+			background-color: var(--input_body_error_color);
+			& > textarea {
+				background-color: var(--input_body_error_color);
+			}
+		}
+
+		&:focus-within {
+			border: 2px solid var(--input_border_focus_color);
+			box-shadow: var(--input_border_focus_boxshadow);
+		}
+
+		& > textarea {
+			padding: 10px;
+			font-size: 14px;
+			font-weight: 500;
+			font-family: 'Roboto', sans-serif;
+			width: 100%;
+			border-radius: 0px;
+			height: 60px;
+			border: none;
+			resize: none;
+			outline: none;
+			color: var(--input_text_color);
+			background-color: var(--input_body_color);
+		}
+	}
 }
 .status-text {
 	font-size: 14px;
@@ -140,3 +175,4 @@ a.button-like {
 	text-decoration: none;
 	cursor: pointer;
 }
+@import url('./components/Popups/Popups.scss');
