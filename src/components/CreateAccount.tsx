@@ -109,6 +109,12 @@ export function CreateAccount() {
 						'Username already exists, please pick another.'
 					)
 					setErrors(true, false, false)
+				} else if (res.statusText === 'ERROR_REQUEST_FORMAT') {
+					setErrors(false, false, false)
+					setStatus(
+						true,
+						'Something went wrong with your request. Please contact support.'
+					)
 				} else {
 					setErrors(false, false, false)
 					setStatus(true, res.statusText)
