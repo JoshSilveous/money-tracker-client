@@ -2,21 +2,20 @@ import React from 'react'
 import { triggerPopup } from '../popup/popup'
 import { NewCategory } from './Popups/NewCategory'
 interface HomeProps {
-	sessionInfo: { username: string; token: string }
+	context: Context
 }
-export function Home({ sessionInfo }: HomeProps) {
-	function buttonHandle() {
-		triggerPopup(<NewCategory sessionInfo={sessionInfo} />)
+export function Home({ context }: HomeProps) {
+	function newCategoryPopup() {
+		triggerPopup(<NewCategory context={context} />)
 	}
-
 	return (
 		<>
 			<h2>Home! This must mean you're logged in!</h2>
-			<p>Username: {sessionInfo.username}</p>
+			<p>Username: {context.username}</p>
 			<p style={{ maxWidth: '500px', wordWrap: 'break-word' }}>
-				Token: {sessionInfo.token}
+				Token: {context.token}
 			</p>
-			<button onClick={buttonHandle}>Popup!</button>
+			<button onClick={newCategoryPopup}>New Category</button>
 		</>
 	)
 }

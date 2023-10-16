@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { Home } from './components/Home'
 import './App.scss'
-import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom'
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 import { Login } from './components/Authentication/Login'
 import { CreateAccount } from './components/Authentication/CreateAccount'
 
@@ -12,6 +12,13 @@ function App() {
 		if (window.location.pathname !== '/authentication/login') {
 			window.location.pathname = 'authentication/login'
 		}
+	}
+	const context: Context = {
+		username: sessionInfo.username,
+		token: sessionInfo.token,
+		refreshToken: (newToken: string) => {
+			setSessionInfo((prev) => ({ ...prev, token: newToken }))
+		},
 	}
 	return (
 		<Router>
@@ -28,7 +35,7 @@ function App() {
 					/>
 				</Routes>
 			)}
-			{sessionInfo.token && <Home sessionInfo={sessionInfo} />}
+			{sessionInfo.token && <Home context={context} />}
 		</Router>
 	)
 }
