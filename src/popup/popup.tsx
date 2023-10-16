@@ -11,8 +11,32 @@ function renderPopups() {
 	const renderMe = <React.Fragment>{activePopups}</React.Fragment>
 	popupDomLocation.render(renderMe)
 }
+/**
+ * Closes the highest-level popup.
+ * Can be safely used when triggered directly inside of popups, since popups are completely overlapping.
+ * @returns
+ */
+function closeCurrentPopup() {
+	activePopups.pop()
+	renderPopups()
+}
 
-function triggerPopup(content: JSX.Element) {
+/**
+ * Triggers a new popup at the highest level. May overlap, but each popup prevents interaction with previous popups.
+ * @param content The JSX Content to be displayed
+ * @param onClose Callback function triggered after the popup is closed. Only works when the  **x** button is pressed, not when `closeCurrentPopup()` is called.
+ * @example
+ *
+ * ```
+ * 	triggerPopup(
+ * 		<div>
+ * 			// some content
+ * 			<button onClick={() => {closeCurrentPopup(); someHandleCloseFn()}}>Finish</button>
+ * 		</div>
+ * 	, someHandleCloseFn())
+ * ```
+ */
+function triggerPopup(content: JSX.Element, onClose?: () => void) {
 	const thisPopupIndex =
 		activePopups.push(
 			<div
@@ -23,7 +47,7 @@ function triggerPopup(content: JSX.Element) {
 					<div
 						className='popup-exit'
 						onClick={() => {
-							closeThisPopup()
+							forceClose()
 						}}
 					>
 						✖
@@ -34,11 +58,12 @@ function triggerPopup(content: JSX.Element) {
 		) - 1
 	renderPopups()
 
-	function closeThisPopup() {
+	function forceClose() {
 		activePopups.splice(thisPopupIndex, 1)
 		renderPopups()
+		if (onClose) {
+			onClose()
+		}
 	}
-
-	return
 }
-export { triggerPopup }
+export { triggerPopup, closeCurrentPopup }

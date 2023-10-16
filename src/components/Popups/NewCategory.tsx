@@ -1,10 +1,11 @@
 import { useRef } from 'react'
 import { ReactComponent as NameIcon } from '../../assets/name.svg'
+import { closeCurrentPopup } from '../../popup/popup'
 
 interface NewCategoryProps {
-	sessionInfo: { username: string; token: string }
+	context: Context
 }
-export function NewCategory({ sessionInfo }: NewCategoryProps) {
+export function NewCategory({ context }: NewCategoryProps) {
 	const inputNameRef = useRef<HTMLInputElement>(null)
 	const inputDescriptionRef = useRef<HTMLTextAreaElement>(null)
 	const statusDivRef = useRef<HTMLDivElement>(null)
@@ -39,8 +40,8 @@ export function NewCategory({ sessionInfo }: NewCategoryProps) {
 
 		const apiUrl = 'http://localhost:3000/api/insertcategory'
 		const data = {
-			username: sessionInfo.username,
-			token: sessionInfo.token,
+			username: context.username,
+			token: context.token,
 			payload: {
 				name: name,
 				description: description,
@@ -70,6 +71,7 @@ export function NewCategory({ sessionInfo }: NewCategoryProps) {
 					false,
 					`Category "${name}" created, category_id is ${data.newCategoryID}.`
 				)
+				context.refreshToken(data.refreshedToken)
 			})
 			.catch((err) => {
 				if (err.message === 'ERROR_DUPLICATE_NAME') {
