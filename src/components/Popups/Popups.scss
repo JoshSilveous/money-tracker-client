@@ -1,8 +1,21 @@
-.new-category-popup {
+.new-category-popup,
+.new-account-popup {
 	display: flex;
 	flex-direction: column;
 	gap: 20px;
+	width: 350px;
+	h1 {
+		margin-top: 0px;
+		text-align: center;
+	}
 	.status-text {
 		height: fit-content;
+		font-size: 14px;
+		font-weight: 500;
+		color: var(--form_status_color);
+		width: 100%;
+		&.error {
+			color: var(--form_status_error_color);
+		}
 	}
 }
