@@ -2,10 +2,10 @@ import { useRef } from 'react'
 import { ReactComponent as NameIcon } from '../../assets/name.svg'
 import { closeCurrentPopup } from '../../popup/popup'
 
-interface NewCategoryProps {
+interface NewAccountProps {
 	context: Context
 }
-export function NewCategory({ context }: NewCategoryProps) {
+export function NewAccount({ context }: NewAccountProps) {
 	const inputNameRef = useRef<HTMLInputElement>(null)
 	const inputDescriptionRef = useRef<HTMLTextAreaElement>(null)
 	const statusDivRef = useRef<HTMLDivElement>(null)
@@ -26,19 +26,19 @@ export function NewCategory({ context }: NewCategoryProps) {
 		statusDivRef.current!.innerText = statusText
 	}
 
-	function createCategory() {
+	function createAccount() {
 		const name = inputNameRef.current!.value
 		const description = inputDescriptionRef.current!.value
 
 		if (name.length === 0) {
 			setError(true)
-			setStatus(true, 'Category Name cannot be blank.')
+			setStatus(true, 'Account Name cannot be blank.')
 		} else {
 			setError(false)
 			setStatus(false, '')
 		}
 
-		const apiUrl = 'http://localhost:3000/api/insertcategory'
+		const apiUrl = 'http://localhost:3000/api/insertaccount'
 		const data = {
 			username: context.username,
 			token: context.token,
@@ -69,7 +69,7 @@ export function NewCategory({ context }: NewCategoryProps) {
 				setError(false)
 				setStatus(
 					false,
-					`Category "${name}" created, category_id is ${data.newCategoryID}.`
+					`Account "${name}" created, account_id is ${data.newAccountID}.`
 				)
 				context.refreshToken(data.refreshedToken)
 			})
@@ -78,7 +78,7 @@ export function NewCategory({ context }: NewCategoryProps) {
 					setError(true)
 					setStatus(
 						true,
-						`Category "${name}" already exists, please pick another name.`
+						`Account "${name}" already exists, please pick another name.`
 					)
 				} else if (err.message === 'ERROR_TOKEN_EXPIRED') {
 					setError(false)
@@ -87,6 +87,7 @@ export function NewCategory({ context }: NewCategoryProps) {
 						'Your session has expired. Redirecting you to the login page.'
 					)
 					setTimeout(() => {
+						console.log('timeout triggered')
 						window.location.pathname = 'authentication/login'
 					}, 1500)
 				} else if (
@@ -106,10 +107,10 @@ export function NewCategory({ context }: NewCategoryProps) {
 	}
 
 	return (
-		<div className='new-category-popup'>
-			<h1>New Category</h1>
+		<div className='new-account-popup'>
+			<h1>New Account</h1>
 			<div className='form-input-container'>
-				<label htmlFor='name-input'>Category Name</label>
+				<label htmlFor='name-input'>Account Name</label>
 				<label htmlFor='name-input'>
 					<div className='input-text-container'>
 						<div className='svg-container'>
@@ -128,7 +129,7 @@ export function NewCategory({ context }: NewCategoryProps) {
 
 			<div className='form-input-container'>
 				<label htmlFor='description-input'>
-					Category Description (optional)
+					Account Description (optional)
 				</label>
 				<label htmlFor='description-input'>
 					<div className='input-textarea-container'>
@@ -141,7 +142,7 @@ export function NewCategory({ context }: NewCategoryProps) {
 				</label>
 			</div>
 			<div className='status-text' ref={statusDivRef} />
-			<button onClick={createCategory}>Create Category</button>
+			<button onClick={createAccount}>Create Account</button>
 		</div>
 	)
 }
