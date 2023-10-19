@@ -17,12 +17,16 @@ export function Home({ context }: HomeProps) {
 		triggerPopup(<NewTransaction context={context} />)
 	}
 	const [devCatsList, setDevCatsList] = React.useState()
+	const [devActsList, setDevActsList] = React.useState()
 
-	// get list of categories (dev only)
+	// (dev only)
 	interface Category {
 		category_id: number
 		name: string
-		description: string
+	}
+	interface Account {
+		account_id: number
+		name: string
 	}
 	function devGetCategories(): Category[] | void {
 		const apiUrl = 'http://localhost:3000/api/getallcategories'
@@ -58,9 +62,6 @@ export function Home({ context }: HomeProps) {
 								<td style={{ width: '100px' }}>
 									{category.name}
 								</td>
-								<td style={{ width: '200px' }}>
-									{category.description}
-								</td>
 							</tr>
 						)
 					})
@@ -71,9 +72,55 @@ export function Home({ context }: HomeProps) {
 				console.error(err)
 			})
 	}
+	function devGetAccounts(): Category[] | void {
+		const apiUrl = 'http://localhost:3000/api/getallaccounts'
+		const data = {
+			username: context.username,
+			token: context.token,
+		}
+		const headers = {
+			'Content-Type': 'application/json',
+		}
+		const requestOptions = {
+			method: 'POST',
+			headers,
+			body: JSON.stringify(data),
+		}
+		fetch(apiUrl, requestOptions)
+			.then((res) => {
+				console.log('res recieved:', res)
+				if (res.ok) {
+					return res.json()
+				} else {
+					throw new Error(res.statusText)
+				}
+			})
+			.then((data) => {
+				setDevActsList(
+					data.accounts.map((account: Account) => {
+						return (
+							<tr>
+								<th style={{ width: '20px' }}>
+									{account.account_id}
+								</th>
+								<td style={{ width: '100px' }}>
+									{account.name}
+								</td>
+							</tr>
+						)
+					})
+				)
+			})
+			.catch((err) => {
+				console.log('error while running dev command getAccounts')
+				console.error(err)
+			})
+	}
 	React.useEffect(() => {
 		devGetCategories()
+		devGetAccounts()
 	}, [])
+	// end (dev only)
 
 	return (
 		<>
@@ -82,15 +129,32 @@ export function Home({ context }: HomeProps) {
 			<p style={{ maxWidth: '500px', wordWrap: 'break-word' }}>
 				Token: {context.token}
 			</p>
-			<button onClick={newCategoryPopup}>New Category</button>
-			<br />
-			<button onClick={newAccountPopup}>New Account</button>
-			<br />
-			<button onClick={newTransactionPopup}>New Transaction</button>
-			<div>
-				<button onClick={devGetCategories}>Update Category List</button>
+			<div style={{ display: 'flex', justifyContent: 'center' }}>
+				<button onClick={newCategoryPopup}>New Category</button>
+				<br />
+				<button onClick={newAccountPopup}>New Account</button>
+				<br />
+				<button onClick={newTransactionPopup}>New Transaction</button>
 			</div>
-			<table>{devCatsList}</table>
+			<br />
+			<div style={{ display: 'flex', flexDirection: 'column' }}>
+				<button onClick={devGetCategories}>Update Category List</button>
+
+				<table
+					style={{
+						backgroundColor: 'var(--input_border_color)',
+					}}
+				>
+					{devCatsList}
+				</table>
+			</div>
+			<div style={{ display: 'flex', flexDirection: 'column' }}>
+				<button onClick={devGetAccounts}>Update Account List</button>
+
+				<table style={{ backgroundColor: 'var(--input_border_color)' }}>
+					{devActsList}
+				</table>
+			</div>
 		</>
 	)
 }
