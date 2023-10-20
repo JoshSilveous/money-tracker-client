@@ -4,8 +4,9 @@ import { closeCurrentPopup } from '../../popup/popup'
 
 interface NewAccountProps {
 	context: Context
+	handleCreate?: (category_id: number) => void
 }
-export function NewAccount({ context }: NewAccountProps) {
+export function NewAccount({ context, handleCreate }: NewAccountProps) {
 	const inputNameRef = useRef<HTMLInputElement>(null)
 	const inputDescriptionRef = useRef<HTMLTextAreaElement>(null)
 	const statusDivRef = useRef<HTMLDivElement>(null)
@@ -69,9 +70,13 @@ export function NewAccount({ context }: NewAccountProps) {
 				setError(false)
 				setStatus(
 					false,
-					`Account "${name}" created, account_id is ${data.newAccountID}.`
+					`Account "${name}" created, account_id is ${data.account_id}.`
 				)
 				context.refreshToken(data.refreshedToken)
+				if (handleCreate) {
+					handleCreate(data.account_id)
+					closeCurrentPopup()
+				}
 			})
 			.catch((err) => {
 				if (err.message === 'ERROR_DUPLICATE_NAME') {

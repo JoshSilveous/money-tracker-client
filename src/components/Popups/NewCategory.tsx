@@ -4,8 +4,9 @@ import { closeCurrentPopup } from '../../popup/popup'
 
 interface NewCategoryProps {
 	context: Context
+	handleCreate?: (category_id: number) => void
 }
-export function NewCategory({ context }: NewCategoryProps) {
+export function NewCategory({ context, handleCreate }: NewCategoryProps) {
 	const inputNameRef = useRef<HTMLInputElement>(null)
 	const inputDescriptionRef = useRef<HTMLTextAreaElement>(null)
 	const statusDivRef = useRef<HTMLDivElement>(null)
@@ -72,6 +73,10 @@ export function NewCategory({ context }: NewCategoryProps) {
 					`Category "${name}" created, category_id is ${data.newCategoryID}.`
 				)
 				context.refreshToken(data.refreshedToken)
+				if (handleCreate) {
+					handleCreate(data.account_id)
+					closeCurrentPopup()
+				}
 			})
 			.catch((err) => {
 				if (err.message === 'ERROR_DUPLICATE_NAME') {

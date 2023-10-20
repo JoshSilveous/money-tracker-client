@@ -1,6 +1,8 @@
 import { useEffect, useRef, useState } from 'react'
 import { ReactComponent as NameIcon } from '../../assets/name.svg'
-import { closeCurrentPopup } from '../../popup/popup'
+import { closeCurrentPopup, triggerPopup } from '../../popup/popup'
+import { NewAccount } from './NewAccount'
+import { NewCategory } from './NewCategory'
 
 interface NewTransactionProps {
 	context: Context
@@ -10,6 +12,8 @@ export function NewTransaction({ context }: NewTransactionProps) {
 	const inputDescriptionRef = useRef<HTMLTextAreaElement>(null)
 	const inputAmountRef = useRef<HTMLInputElement>(null)
 	const inputAmountDecimalRef = useRef<HTMLInputElement>(null)
+	const selectAccountRef = useRef<HTMLSelectElement>(null)
+	const selectCategoryRef = useRef<HTMLSelectElement>(null)
 	const statusDivRef = useRef<HTMLDivElement>(null)
 
 	interface LightCategory {
@@ -35,8 +39,101 @@ export function NewTransaction({ context }: NewTransactionProps) {
 			?account 
 	*/
 
-	function test(e: React.ChangeEvent<HTMLSelectElement>) {
-		console.log(e.target.value)
+	// -------- Account List Functions --------
+	const [pendingNewAct, setPendingNewAct] = useState(false)
+
+	useEffect(() => {
+		if (pendingNewAct) {
+			setTimeout(() => {
+				// timeout used due to issues detecting new option immediately after re-render
+				selectAccountRef.current!.selectedIndex =
+					selectAccountRef.current!.options.length - 2
+				setPendingNewAct(false)
+			}, 100)
+		}
+	}, [pendingNewAct])
+
+	function handleAccountChange(e: React.ChangeEvent<HTMLSelectElement>) {
+		if (e.target.value === 'new') {
+			e.target.selectedIndex = 0
+			function handleCreate() {
+				setPendingNewAct(true)
+				updateActList()
+			}
+			triggerPopup(
+				<NewAccount context={context} handleCreate={handleCreate} />
+			)
+		}
+	}
+
+	function updateActList() {
+		const apiUrl = 'http://localhost:3000/api/getallaccounts'
+		const data = {
+			username: context.username,
+			token: context.token,
+		}
+		const headers = {
+			'Content-Type': 'application/json',
+		}
+		const requestOptions = {
+			method: 'POST',
+			headers,
+			body: JSON.stringify(data),
+		}
+		fetch(apiUrl, requestOptions)
+			.then((res) => {
+				if (res.ok) {
+					return res.json()
+				} else {
+					throw new Error(res.statusText)
+				}
+			})
+			.then((data) => {
+				setActList(
+					data.accounts.map((account: LightAccount) => {
+						return (
+							<option value={account.account_id}>
+								{account.name}
+							</option>
+						)
+					})
+				)
+			})
+			.catch((err) => {
+				console.log('Error occured while retrieving Accounts')
+				console.error(err)
+			})
+	}
+
+	// -------- Account List Functions --------
+	//
+	//
+	// -------- Category List Functions --------
+
+	const [pendingNewCat, setPendingNewCat] = useState(false)
+
+	useEffect(() => {
+		if (pendingNewCat) {
+			setTimeout(() => {
+				// timeout used due to issues detecting new option immediately after re-render
+				selectCategoryRef.current!.selectedIndex =
+					selectCategoryRef.current!.options.length - 2
+				setPendingNewCat(false)
+			}, 100)
+		}
+	}, [pendingNewCat])
+
+	function handleCategoryChange(e: React.ChangeEvent<HTMLSelectElement>) {
+		if (e.target.value === 'new') {
+			e.target.selectedIndex = 0
+			function handleCreate() {
+				setPendingNewCat(true)
+				updateCatList()
+			}
+			triggerPopup(
+				<NewCategory context={context} handleCreate={handleCreate} />
+			)
+		}
 	}
 
 	function updateCatList() {
@@ -55,7 +152,6 @@ export function NewTransaction({ context }: NewTransactionProps) {
 		}
 		fetch(apiUrl, requestOptions)
 			.then((res) => {
-				console.log('res recieved:', res)
 				if (res.ok) {
 					return res.json()
 				} else {
@@ -79,45 +175,7 @@ export function NewTransaction({ context }: NewTransactionProps) {
 			})
 	}
 
-	function updateActList() {
-		const apiUrl = 'http://localhost:3000/api/getallaccounts'
-		const data = {
-			username: context.username,
-			token: context.token,
-		}
-		const headers = {
-			'Content-Type': 'application/json',
-		}
-		const requestOptions = {
-			method: 'POST',
-			headers,
-			body: JSON.stringify(data),
-		}
-		fetch(apiUrl, requestOptions)
-			.then((res) => {
-				console.log('res recieved:', res)
-				if (res.ok) {
-					return res.json()
-				} else {
-					throw new Error(res.statusText)
-				}
-			})
-			.then((data) => {
-				setActList(
-					data.accounts.map((account: LightAccount) => {
-						return (
-							<option value={account.account_id}>
-								{account.name}
-							</option>
-						)
-					})
-				)
-			})
-			.catch((err) => {
-				console.log('Error occured while retrieving Categories')
-				console.error(err)
-			})
-	}
+	// -------- Category List Functions --------
 
 	useEffect(() => {
 		updateCatList()
@@ -210,8 +268,16 @@ export function NewTransaction({ context }: NewTransactionProps) {
 								Category (optional)
 							</label>
 							<label htmlFor='category-input'>
-								<select id='category-input' onChange={test}>
+								<select
+									id='category-input'
+									onChange={handleCategoryChange}
+									ref={selectCategoryRef}
+								>
+									<option value='' />
 									{catList}
+									<option value='new'>
+										Create New Category
+									</option>
 								</select>
 							</label>
 						</div>
@@ -220,8 +286,16 @@ export function NewTransaction({ context }: NewTransactionProps) {
 								Account (optional)
 							</label>
 							<label htmlFor='account-input'>
-								<select id='account-input' onChange={test}>
+								<select
+									id='account-input'
+									onChange={handleAccountChange}
+									ref={selectAccountRef}
+								>
+									<option value='' />
 									{actList}
+									<option value='new'>
+										Create New Account
+									</option>
 								</select>
 							</label>
 						</div>
