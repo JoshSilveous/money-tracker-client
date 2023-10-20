@@ -1,9 +1,9 @@
 .new-category-popup,
-.new-account-popup {
+.new-account-popup,
+.new-transaction-popup {
 	display: flex;
 	flex-direction: column;
 	gap: 20px;
-	width: 350px;
 	h1 {
 		margin-top: 0px;
 		text-align: center;
@@ -25,5 +25,35 @@
 	max-width: 350px;
 }
 .new-transaction-popup {
-	max-width: 700px;
+	width: 725px;
+	.column-container {
+		display: flex;
+		justify-content: space-between;
+	}
+
+	.row {
+		display: flex;
+		width: 100%;
+		justify-content: space-between;
+		.form-input-container {
+			width: fit-content;
+			select {
+				width: 150px;
+			}
+		}
+	}
+
+	.input-text-container {
+		background-color: var(--input_body_color);
+		.amount-input {
+			text-align: right;
+			padding-right: 2px;
+		}
+		.decimal {
+		}
+		.amount-input-decimal {
+			width: 30px;
+			padding-left: 2px;
+		}
+	}
 }

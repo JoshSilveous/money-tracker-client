@@ -18,6 +18,8 @@ body {
 	font-size: 14px;
 	font-weight: 500;
 	color: var(--input_label_color);
+	display: flex;
+	flex-direction: column;
 
 	.input-text-container {
 		display: flex;
