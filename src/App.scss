@@ -20,6 +20,23 @@ body {
 	color: var(--input_label_color);
 	display: flex;
 	flex-direction: column;
+	select {
+		height: 40px;
+		padding-left: 10px;
+		font-weight: 500;
+		font-family: 'Roboto', sans-serif;
+		background-color: var(--input_body_color);
+		border: 2px solid var(--input_border_color);
+		outline: none;
+		color: var(--input_text_color);
+		&:focus {
+			border: 2px solid var(--input_border_focus_color);
+			box-shadow: var(--input_border_focus_boxshadow);
+		}
+		option {
+			font-family: 'Roboto', sans-serif;
+		}
+	}
 
 	.input-text-container {
 		display: flex;

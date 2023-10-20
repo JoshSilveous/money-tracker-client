@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { ReactComponent as NameIcon } from '../../assets/name.svg'
+import { ReactComponent as DollarIcon } from '../../assets/dollar.svg'
 import { closeCurrentPopup, triggerPopup } from '../../popup/popup'
 import { NewAccount } from './NewAccount'
 import { NewCategory } from './NewCategory'
@@ -53,9 +54,10 @@ export function NewTransaction({ context }: NewTransactionProps) {
 		}
 	}, [pendingNewAct])
 
+	let prevActInx = 0
 	function handleAccountChange(e: React.ChangeEvent<HTMLSelectElement>) {
 		if (e.target.value === 'new') {
-			e.target.selectedIndex = 0
+			e.target.selectedIndex = prevActInx
 			function handleCreate() {
 				setPendingNewAct(true)
 				updateActList()
@@ -63,6 +65,8 @@ export function NewTransaction({ context }: NewTransactionProps) {
 			triggerPopup(
 				<NewAccount context={context} handleCreate={handleCreate} />
 			)
+		} else {
+			prevActInx = e.target.selectedIndex
 		}
 	}
 
@@ -123,9 +127,10 @@ export function NewTransaction({ context }: NewTransactionProps) {
 		}
 	}, [pendingNewCat])
 
+	let prevCatInx = 0
 	function handleCategoryChange(e: React.ChangeEvent<HTMLSelectElement>) {
 		if (e.target.value === 'new') {
-			e.target.selectedIndex = 0
+			e.target.selectedIndex = prevCatInx
 			function handleCreate() {
 				setPendingNewCat(true)
 				updateCatList()
@@ -133,6 +138,8 @@ export function NewTransaction({ context }: NewTransactionProps) {
 			triggerPopup(
 				<NewCategory context={context} handleCreate={handleCreate} />
 			)
+		} else {
+			prevCatInx = e.target.selectedIndex
 		}
 	}
 
@@ -237,7 +244,7 @@ export function NewTransaction({ context }: NewTransactionProps) {
 						<label htmlFor='amount-input'>
 							<div className='input-text-container'>
 								<div className='svg-container'>
-									<NameIcon />
+									<DollarIcon />
 								</div>
 								<input
 									type='text'
