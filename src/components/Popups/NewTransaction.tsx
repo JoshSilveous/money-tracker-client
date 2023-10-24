@@ -10,7 +10,7 @@ interface NewTransactionProps {
 }
 export function NewTransaction({ context }: NewTransactionProps) {
 	const inputNameRef = useRef<HTMLInputElement>(null)
-	const inputDescriptionRef = useRef<HTMLTextAreaElement>(null)
+	const inputNotesRef = useRef<HTMLTextAreaElement>(null)
 	const inputAmountRef = useRef<HTMLInputElement>(null)
 	const inputAmountDecimalRef = useRef<HTMLInputElement>(null)
 	const inputDateRef = useRef<HTMLInputElement>(null)
@@ -26,6 +26,9 @@ export function NewTransaction({ context }: NewTransactionProps) {
 
 		inputDateRef.current!.value = `${year}-${month}-${day}`
 		inputNameRef.current!.focus()
+
+		updateCatList()
+		updateActList()
 	}, [])
 
 	interface LightCategory {
@@ -40,16 +43,73 @@ export function NewTransaction({ context }: NewTransactionProps) {
 	const [catList, setCatList] = useState<React.ReactNode[]>()
 	const [actList, setActList] = useState<React.ReactNode[]>()
 
-	function createTransaction() {}
+	function createTransaction() {
+		const valName = inputNameRef.current!.value
+		const valAmount =
+			inputAmountRef.current!.value +
+			'.' +
+			inputAmountDecimalRef.current!.value.padEnd(2, '0')
+		const valCategory = selectCategoryRef.current!.value
+		const valAccount = selectAccountRef.current!.value
+		const valDate = inputDateRef.current!.value
+		const valNotes = inputNotesRef.current!.value
 
-	/* 	inputs needed:
-			name
-			?notes
-			timestamp (seperate date + time(optional) menus)
-			amount
-			?category
-			?account 
-	*/
+		let error = false
+		if (!valName) {
+			error = true
+			inputNameRef.current!.parentElement!.classList.add('error')
+		} else {
+			inputNameRef.current!.parentElement!.classList.remove('error')
+		}
+
+		if (valAmount === '.00') {
+			error = true
+			inputAmountRef.current!.parentElement!.classList.add('error')
+		} else {
+			inputAmountRef.current!.parentElement!.classList.remove('error')
+		}
+
+		if (!valDate) {
+			error = true
+			inputDateRef.current!.parentElement!.classList.add('error')
+		} else {
+			inputDateRef.current!.parentElement!.classList.remove('error')
+		}
+		if (!error) {
+			const apiUrl = 'http://localhost:3000/api/inserttransaction'
+			const data = {
+				username: context.username,
+				token: context.token,
+				payload: {
+					name: valName,
+					timestamp: valDate,
+					notes: valNotes,
+					amount: parseInt(valAmount),
+					category_id: valCategory ? parseInt(valCategory) : null,
+					account_id: valAccount ? parseInt(valAccount) : null,
+				},
+			}
+			const headers = {
+				'Content-Type': 'application/json',
+			}
+			const requestOptions = {
+				method: 'POST',
+				headers,
+				body: JSON.stringify(data),
+			}
+			fetch(apiUrl, requestOptions)
+				.then((res) => {
+					if (res.ok) {
+						return res.json()
+					} else {
+						console.error(res)
+					}
+				})
+				.then((data) => {
+					console.log(data)
+				})
+		}
+	}
 
 	// -------- Account List Functions --------
 	const [pendingNewAct, setPendingNewAct] = useState(false)
@@ -195,11 +255,6 @@ export function NewTransaction({ context }: NewTransactionProps) {
 
 	// -------- Category List Functions --------
 
-	useEffect(() => {
-		updateCatList()
-		updateActList()
-	}, [])
-
 	function filterNumeric(e: React.ChangeEvent<HTMLInputElement>) {
 		const inputNode = e.target as HTMLInputElement
 		if (inputNode.value.includes('.')) {
@@ -291,11 +346,13 @@ export function NewTransaction({ context }: NewTransactionProps) {
 				<div className='form-input-container date'>
 					<label htmlFor='date-input'>Date</label>
 					<label htmlFor='date-input' className='label-container'>
-						<input
-							type='date'
-							id='date-input'
-							ref={inputDateRef}
-						></input>
+						<div className='input-text-container'>
+							<input
+								type='date'
+								id='date-input'
+								ref={inputDateRef}
+							></input>
+						</div>
 					</label>
 				</div>
 				<div className='form-input-container notes'>
@@ -307,7 +364,7 @@ export function NewTransaction({ context }: NewTransactionProps) {
 						<div className='input-textarea-container'>
 							<textarea
 								id='description-input'
-								ref={inputDescriptionRef}
+								ref={inputNotesRef}
 								maxLength={400}
 							/>
 						</div>
