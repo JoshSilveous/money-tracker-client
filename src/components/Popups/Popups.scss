@@ -25,21 +25,61 @@
 	max-width: 350px;
 }
 .new-transaction-popup {
-	width: 725px;
-	.column-container {
-		display: flex;
-		justify-content: space-between;
+	width: 575px;
+	.form-container {
+		display: grid;
+		grid-template-columns: repeat(3, 1fr);
+		grid-template-rows: repeat(4, 60px);
+		column-gap: 20px;
+		row-gap: 20px;
+		.name {
+			grid-column: 1 / 3;
+		}
+		.notes {
+			grid-column: 2/4;
+			grid-row: 2/5;
+			.label-container {
+				height: 100%;
+				textarea {
+					height: calc(100% - 20px);
+				}
+			}
+		}
 	}
 
-	.row {
-		display: flex;
+	.form-input-container {
 		width: 100%;
-		justify-content: space-between;
-		.form-input-container {
-			width: fit-content;
-			select {
-				width: 150px;
+		.label-container {
+			height: 100%;
+		}
+		#date-input {
+			height: 100%;
+			width: 100%;
+			font-weight: 500;
+			font-family: 'Roboto', sans-serif;
+			box-sizing: border-box;
+			background-color: var(--input_body_color);
+			border: 2px solid var(--input_border_color);
+			padding-left: 8px;
+
+			&:focus {
+				border: 2px solid var(--input_border_focus_color);
+				box-shadow: var(--input_border_focus_boxshadow);
 			}
+		}
+
+		.input-textarea-container {
+			box-sizing: border-box;
+		}
+		.input-text-container {
+			box-sizing: border-box;
+		}
+		&.short {
+			width: 200px;
+		}
+		select {
+			width: 200px;
+			box-sizing: border-box;
 		}
 	}
 
@@ -49,11 +89,46 @@
 			text-align: right;
 			padding-right: 2px;
 		}
-		.decimal {
-		}
 		.amount-input-decimal {
 			width: 30px;
 			padding-left: 2px;
 		}
 	}
 }
+
+// .new-transaction-popup {
+// 	width: 575px;
+// 	.column-container {
+// 		display: flex;
+// 		justify-content: space-between;
+// 	}
+
+// 	.form-input-container {
+// 		width: 350px;
+
+// 		.input-textarea-container {
+// 			height: 120px;
+// 			textarea {
+// 				height: 100px;
+// 			}
+// 		}
+// 		&.short {
+// 			width: 200px;
+// 		}
+// 		select {
+// 			width: 200px;
+// 		}
+// 	}
+
+// 	.input-text-container {
+// 		background-color: var(--input_body_color);
+// 		.amount-input {
+// 			text-align: right;
+// 			padding-right: 2px;
+// 		}
+// 		.amount-input-decimal {
+// 			width: 30px;
+// 			padding-left: 2px;
+// 		}
+// 	}
+// }

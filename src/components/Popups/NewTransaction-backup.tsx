@@ -13,20 +13,9 @@ export function NewTransaction({ context }: NewTransactionProps) {
 	const inputDescriptionRef = useRef<HTMLTextAreaElement>(null)
 	const inputAmountRef = useRef<HTMLInputElement>(null)
 	const inputAmountDecimalRef = useRef<HTMLInputElement>(null)
-	const inputDateRef = useRef<HTMLInputElement>(null)
 	const selectAccountRef = useRef<HTMLSelectElement>(null)
 	const selectCategoryRef = useRef<HTMLSelectElement>(null)
 	const statusDivRef = useRef<HTMLDivElement>(null)
-
-	useEffect(() => {
-		const currentDate = new Date()
-		const year = currentDate.getFullYear()
-		const month = String(currentDate.getMonth() + 1).padStart(2, '0')
-		const day = String(currentDate.getDate()).padStart(2, '0')
-
-		inputDateRef.current!.value = `${year}-${month}-${day}`
-		inputNameRef.current!.focus()
-	}, [])
 
 	interface LightCategory {
 		category_id: number
@@ -214,104 +203,106 @@ export function NewTransaction({ context }: NewTransactionProps) {
 	return (
 		<div className='new-transaction-popup'>
 			<h1>New Transaction</h1>
-			<div className='form-container'>
-				<div className='form-input-container name'>
-					<label htmlFor='name-input'>Transaction Name</label>
-					<label htmlFor='name-input'>
-						<div className='input-text-container'>
-							<div className='svg-container'>
-								<NameIcon />
+			<div className='column-container'>
+				<div className='column'>
+					<div className='form-input-container'>
+						<label htmlFor='name-input'>Transaction Name</label>
+						<label htmlFor='name-input'>
+							<div className='input-text-container'>
+								<div className='svg-container'>
+									<NameIcon />
+								</div>
+								<input
+									type='text'
+									id='name-input'
+									ref={inputNameRef}
+									maxLength={32}
+								/>
 							</div>
-							<input
-								type='text'
-								id='name-input'
-								ref={inputNameRef}
-								maxLength={32}
-							/>
-						</div>
-					</label>
-				</div>
-				<div className='form-input-container amount'>
-					<label htmlFor='amount-input'>Amount</label>
-					<label htmlFor='amount-input'>
-						<div className='input-text-container'>
-							<div className='svg-container'>
-								<DollarIcon />
+						</label>
+					</div>
+					<br />
+
+					<div className='form-input-container'>
+						<label htmlFor='description-input'>
+							Notes (optional)
+						</label>
+						<label htmlFor='description-input'>
+							<div className='input-textarea-container'>
+								<textarea
+									id='description-input'
+									ref={inputDescriptionRef}
+									maxLength={400}
+								/>
 							</div>
-							<input
-								type='text'
-								inputMode='numeric'
-								id='amount-input'
-								className='amount-input'
-								ref={inputAmountRef}
-								maxLength={10}
-								onInput={filterNumeric}
-							/>
-							<div className='decimal'>.</div>
-							<input
-								type='text'
-								inputMode='numeric'
-								id='amount-input-decimal'
-								className='amount-input-decimal'
-								ref={inputAmountDecimalRef}
-								onInput={filterNumeric}
-								maxLength={2}
-							/>
-						</div>
-					</label>
+						</label>
+					</div>
 				</div>
-				<div className='form-input-container category'>
-					<label htmlFor='category-input'>Category (optional)</label>
-					<label htmlFor='category-input'>
-						<select
-							id='category-input'
-							onChange={handleCategoryChange}
-							ref={selectCategoryRef}
-						>
-							<option value='' />
-							{catList}
-							<option value='new'>Create New Category</option>
-						</select>
-					</label>
-				</div>
-				<div className='form-input-container account'>
-					<label htmlFor='account-input'>Account (optional)</label>
-					<label htmlFor='account-input'>
-						<select
-							id='account-input'
-							onChange={handleAccountChange}
-							ref={selectAccountRef}
-						>
-							<option value='' />
-							{actList}
-							<option value='new'>Create New Account</option>
-						</select>
-					</label>
-				</div>
-				<div className='form-input-container date'>
-					<label htmlFor='date-input'>Date</label>
-					<label htmlFor='date-input' className='label-container'>
-						<input
-							type='date'
-							id='date-input'
-							ref={inputDateRef}
-						></input>
-					</label>
-				</div>
-				<div className='form-input-container notes'>
-					<label htmlFor='description-input'>Notes (optional)</label>
-					<label
-						htmlFor='description-input'
-						className='label-container'
-					>
-						<div className='input-textarea-container'>
-							<textarea
-								id='description-input'
-								ref={inputDescriptionRef}
-								maxLength={400}
-							/>
-						</div>
-					</label>
+				<div className='column'>
+					<div className='form-input-container short'>
+						<label htmlFor='amount-input'>Amount</label>
+						<label htmlFor='amount-input'>
+							<div className='input-text-container'>
+								<div className='svg-container'>
+									<DollarIcon />
+								</div>
+								<input
+									type='text'
+									inputMode='numeric'
+									id='amount-input'
+									className='amount-input'
+									ref={inputAmountRef}
+									maxLength={10}
+									onInput={filterNumeric}
+								/>
+								<div className='decimal'>.</div>
+								<input
+									type='text'
+									inputMode='numeric'
+									id='amount-input-decimal'
+									className='amount-input-decimal'
+									ref={inputAmountDecimalRef}
+									onInput={filterNumeric}
+									maxLength={2}
+								/>
+							</div>
+						</label>
+					</div>
+					<br />
+					<div className='form-input-container short'>
+						<label htmlFor='category-input'>
+							Category (optional)
+						</label>
+						<label htmlFor='category-input'>
+							<select
+								id='category-input'
+								onChange={handleCategoryChange}
+								ref={selectCategoryRef}
+							>
+								<option value='' />
+								{catList}
+								<option value='new'>Create New Category</option>
+							</select>
+						</label>
+					</div>
+					<br />
+					<div className='form-input-container short'>
+						<label htmlFor='account-input'>
+							Account (optional)
+						</label>
+						<label htmlFor='account-input'>
+							<select
+								id='account-input'
+								onChange={handleAccountChange}
+								ref={selectAccountRef}
+							>
+								<option value='' />
+								{actList}
+								<option value='new'>Create New Account</option>
+							</select>
+						</label>
+					</div>
+					<input type='date'></input>
 				</div>
 			</div>
 			<div className='status-text' ref={statusDivRef} />
