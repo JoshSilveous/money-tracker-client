@@ -48,10 +48,6 @@ body {
 		&.error {
 			border-color: var(--input_border_error_color);
 			background-color: var(--input_body_error_color);
-			& > input {
-				background-color: var(--input_body_error_color);
-			}
-
 			.svg-container {
 				border-right: 2px solid var(--input_divider_error_color);
 				background-color: var(--input_body_error_color);
