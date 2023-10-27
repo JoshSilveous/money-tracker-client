@@ -1,4 +1,4 @@
-import { useRef } from 'react'
+import { useEffect, useRef } from 'react'
 import { ReactComponent as NameIcon } from '../../assets/name.svg'
 import { closeCurrentPopup } from '../../popup/popup'
 
@@ -10,6 +10,10 @@ export function NewAccount({ context, handleCreate }: NewAccountProps) {
 	const inputNameRef = useRef<HTMLInputElement>(null)
 	const inputDescriptionRef = useRef<HTMLTextAreaElement>(null)
 	const statusDivRef = useRef<HTMLDivElement>(null)
+
+	useEffect(() => {
+		inputNameRef.current!.focus()
+	}, [])
 
 	function setError(inputName?: boolean) {
 		if (inputName) {
