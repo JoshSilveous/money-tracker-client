@@ -18,6 +18,15 @@ export function NewTransaction({ context }: NewTransactionProps) {
 	const selectCategoryRef = useRef<HTMLSelectElement>(null)
 	const statusDivRef = useRef<HTMLDivElement>(null)
 
+	function setStatus(error: boolean, statusText: string) {
+		if (error) {
+			statusDivRef.current!.classList.add('error')
+		} else {
+			statusDivRef.current!.classList.remove('error')
+		}
+		statusDivRef.current!.innerText = statusText
+	}
+
 	useEffect(() => {
 		const currentDate = new Date()
 		const year = currentDate.getFullYear()
@@ -102,11 +111,40 @@ export function NewTransaction({ context }: NewTransactionProps) {
 					if (res.ok) {
 						return res.json()
 					} else {
-						console.error(res)
+						throw new Error(res.statusText)
 					}
 				})
 				.then((data) => {
+					setStatus(
+						false,
+						`Category "${valName}" created, transaction_id is ${data.transaction_id}.`
+					)
 					console.log(data)
+					context.refreshToken(data.refreshedToken)
+				})
+				.catch((err) => {
+					if (err.message === 'ERROR_TOKEN_EXPIRED') {
+						setStatus(
+							true,
+							'Your session has expired. Redirecting you to the login page.'
+						)
+						setTimeout(() => {
+							window.location.pathname = 'authentication/login'
+						}, 1500)
+					} else if (
+						err.message ===
+						'NetworkError when attempting to fetch resource.'
+					) {
+						setStatus(
+							true,
+							"Couldn't contact server. Our server may be down, or you might not have internet connection."
+						)
+					} else {
+						setStatus(
+							true,
+							`Unexpected server error: ${err.message}`
+						)
+					}
 				})
 		}
 	}
