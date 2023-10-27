@@ -65,12 +65,8 @@ export function Home({ context }: HomeProps) {
 					data.categories.map((category: Category) => {
 						return (
 							<tr>
-								<th style={{ width: '20px' }}>
-									{category.category_id}
-								</th>
-								<td style={{ width: '100px' }}>
-									{category.name}
-								</td>
+								<th>{category.category_id}</th>
+								<td>{category.name}</td>
 							</tr>
 						)
 					})
@@ -109,12 +105,8 @@ export function Home({ context }: HomeProps) {
 					data.accounts.map((account: Account) => {
 						return (
 							<tr>
-								<th style={{ width: '20px' }}>
-									{account.account_id}
-								</th>
-								<td style={{ width: '100px' }}>
-									{account.name}
-								</td>
+								<th>{account.account_id}</th>
+								<td>{account.name}</td>
 							</tr>
 						)
 					})
@@ -174,24 +166,12 @@ export function Home({ context }: HomeProps) {
 					data.displayData.map((transaction: Transaction) => {
 						return (
 							<tr>
-								<th style={{ width: '15px' }}>
-									{transaction.transaction_id}
-								</th>
-								<td style={{ width: '100px' }}>
-									{transaction.name}
-								</td>
-								<td style={{ width: '60px' }}>
-									{transaction.timestamp}
-								</td>
-								<td style={{ width: '30px' }}>
-									{transaction.amount}
-								</td>
-								<td style={{ width: '80px' }}>
-									{transaction.category_name}
-								</td>
-								<td style={{ width: '80px' }}>
-									{transaction.account_name}
-								</td>
+								<th>{transaction.transaction_id}</th>
+								<td>{transaction.name}</td>
+								<td>{transaction.timestamp}</td>
+								<td>{transaction.amount}</td>
+								<td>{transaction.category_name}</td>
+								<td>{transaction.account_name}</td>
 							</tr>
 						)
 					})
@@ -223,63 +203,51 @@ export function Home({ context }: HomeProps) {
 				<button onClick={newTransactionPopup}>New Transaction</button>
 			</div>
 			<br />
-			<div style={{ display: 'flex', flexDirection: 'column' }}>
-				<button onClick={devGetCategories}>Update Category List</button>
+			<h2>Developer Tools</h2>
+			<div className='dev-panel'>
+				<div className='col cat'>
+					<button onClick={devGetCategories}>
+						Update Category List
+					</button>
 
-				<table
-					style={{
-						backgroundColor: 'var(--input_border_color)',
-						textAlign: 'left',
-						paddingLeft: '10px',
-					}}
-				>
-					<tr>
-						<th>category_id</th>
-						<th>name</th>
-					</tr>
-					{devCatsList}
-				</table>
-			</div>
-			<div style={{ display: 'flex', flexDirection: 'column' }}>
-				<button onClick={devGetAccounts}>Update Account List</button>
+					<table>
+						<tr>
+							<th>category_id</th>
+							<th>name</th>
+						</tr>
+						{devCatsList}
+					</table>
+				</div>
+				<div className='col act'>
+					<button onClick={devGetAccounts}>
+						Update Account List
+					</button>
 
-				<table
-					style={{
-						backgroundColor: 'var(--input_border_color)',
-						textAlign: 'left',
-						paddingLeft: '10px',
-					}}
-				>
-					<tr>
-						<th>account_id</th>
-						<th>name</th>
-					</tr>
-					{devActsList}
-				</table>
-			</div>
-			<div style={{ display: 'flex', flexDirection: 'column' }}>
-				<button onClick={devGetDisplayData}>
-					Update Transaction List
-				</button>
+					<table>
+						<tr>
+							<th>account_id</th>
+							<th>name</th>
+						</tr>
+						{devActsList}
+					</table>
+				</div>
+				<div className='col trn'>
+					<button onClick={devGetDisplayData}>
+						Update Transaction List
+					</button>
 
-				<table
-					style={{
-						backgroundColor: 'var(--input_border_color)',
-						textAlign: 'left',
-						paddingLeft: '10px',
-						width: '1000px',
-					}}
-				>
-					<tr>
-						<th>transaction_id</th>
-						<th>name</th>
-						<th>timestamp</th>
-						<th>amount</th>
-						<th>category_name</th>
-						<th>account_name</th>
-					</tr>
-					{devTransactionList}
-				</table>
+					<table>
+						<tr>
+							<th>transaction_id</th>
+							<th>name</th>
+							<th>timestamp</th>
+							<th>amount</th>
+							<th>category_name</th>
+							<th>account_name</th>
+						</tr>
+						{devTransactionList}
+					</table>
+				</div>
 			</div>
 		</>
 	)

@@ -1,0 +1,49 @@
+.dev-panel {
+	display: flex;
+	flex-direction: row;
+	gap: 20px;
+	background-color: antiquewhite;
+	padding: 30px;
+	border-radius: 20px;
+	.col {
+		display: flex;
+		flex-direction: column;
+		overflow: scroll;
+		gap: 20px;
+
+		button {
+			background-color: cadetblue;
+			color: white;
+			transition: background-color 0.1s ease;
+			outline: none;
+			&:hover {
+				background-color: rgb(157, 202, 204);
+			}
+			&:focus {
+				box-shadow: inset 0 0 0px 3px rgba(0, 0, 0, 0.5);
+			}
+		}
+
+		&.act {
+			max-width: 300px;
+		}
+		&.cat {
+			max-width: 300px;
+		}
+		&.trn {
+			max-width: 800px;
+		}
+		table {
+			text-align: left;
+			background-color: rgb(94, 194, 161);
+			th {
+				width: fit-content;
+			}
+			th,
+			td {
+				background-color: aquamarine;
+				padding: 2px 5px;
+			}
+		}
+	}
+}
