@@ -181,5 +181,9 @@ a.button-like {
 	font-weight: 700;
 	text-decoration: none;
 	cursor: pointer;
+	&:focus {
+		outline: 2px solid var(--input_border_focus_color);
+		box-shadow: var(--input_border_focus_boxshadow);
+	}
 }
 @import url('./components/Popups/Popups.scss');
