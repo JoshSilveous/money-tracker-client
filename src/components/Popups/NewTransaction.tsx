@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { ReactComponent as NameIcon } from '../../assets/name.svg'
-import { ReactComponent as DollarIcon } from '../../assets/dollar.svg'
+import { ReactComponent as MinusIcon } from '../assets/minus.svg'
+import { ReactComponent as PlusIcon } from '../assets/plus.svg'
 import { closeCurrentPopup, triggerPopup } from '../../popup/popup'
 import { NewAccount } from './NewAccount'
 import { NewCategory } from './NewCategory'
@@ -11,8 +12,6 @@ interface NewTransactionProps {
 export function NewTransaction({ context }: NewTransactionProps) {
 	const inputNameRef = useRef<HTMLInputElement>(null)
 	const inputNotesRef = useRef<HTMLTextAreaElement>(null)
-	const inputAmountRef = useRef<HTMLInputElement>(null)
-	const inputAmountDecimalRef = useRef<HTMLInputElement>(null)
 	const inputDateRef = useRef<HTMLInputElement>(null)
 	const selectAccountRef = useRef<HTMLSelectElement>(null)
 	const selectCategoryRef = useRef<HTMLSelectElement>(null)
@@ -293,17 +292,6 @@ export function NewTransaction({ context }: NewTransactionProps) {
 
 	// -------- Category List Functions --------
 
-	function filterNumeric(e: React.ChangeEvent<HTMLInputElement>) {
-		const inputNode = e.target as HTMLInputElement
-		if (inputNode.value.includes('.')) {
-			inputNode.value = inputNode.value.replace(/[^0-9]/g, '')
-			inputAmountDecimalRef.current!.focus()
-			inputAmountDecimalRef.current!.select()
-		}
-
-		inputNode.value = inputNode.value.replace(/[^0-9]/g, '')
-	}
-
 	return (
 		<div className='new-transaction-popup'>
 			<h1>New Transaction</h1>
@@ -331,6 +319,14 @@ export function NewTransaction({ context }: NewTransactionProps) {
 							<div className='svg-container'>
 								<DollarIcon />
 							</div>
+							<button
+								ref={inputAmountDirectionRef}
+								className='direction neg'
+								onClick={handleDirectionClick}
+								value='-'
+							>
+								-
+							</button>
 							<input
 								type='text'
 								inputMode='numeric'
