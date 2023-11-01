@@ -122,19 +122,6 @@ export function Home({ context }: HomeProps) {
 	function devGetDisplayData(): Transaction[] | void {
 		const apiUrl = 'http://localhost:3000/api/getdisplaydata'
 
-		/* 
-		Example Data Structure
-		{
-			username: newUserCredentials.username,
-			token: token,
-			payload: {
-				resPerPage: 10,
-				thisPage: 1,
-				orderBy: 'timestamp',
-				orderByDirection: 'DESC',
-			},
-		}
-		*/
 		const data = {
 			username: context.username,
 			token: context.token,
