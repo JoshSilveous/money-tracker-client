@@ -1,8 +1,9 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { triggerPopup } from '../popup/popup'
 import { NewCategory } from './Popups/NewCategory'
 import { NewAccount } from './Popups/NewAccount'
 import { NewTransaction } from './Popups/NewTransaction'
+import { TransactionTable } from './TransactionTable/TransactionTable'
 interface HomeProps {
 	context: Context
 }
@@ -21,6 +22,7 @@ export function Home({ context }: HomeProps) {
 	const [devTransactionList, setDevTransactionList] = React.useState()
 
 	// (dev only)
+	const [showDevTools, setShowDevTools] = useState(false)
 	interface Category {
 		category_id: number
 		name: string
@@ -117,7 +119,6 @@ export function Home({ context }: HomeProps) {
 				console.error(err)
 			})
 	}
-
 	function devGetDisplayData(): Transaction[] | void {
 		const apiUrl = 'http://localhost:3000/api/getdisplaydata'
 
@@ -178,13 +179,15 @@ export function Home({ context }: HomeProps) {
 				)
 			})
 			.catch((err) => {
-				console.log('error while running dev command getAccounts')
+				console.log('error while running dev command getDisplayData')
 				console.error(err)
 			})
 	}
+
 	React.useEffect(() => {
 		devGetCategories()
 		devGetAccounts()
+		devGetDisplayData()
 	}, [])
 	// end (dev only)
 
@@ -203,52 +206,61 @@ export function Home({ context }: HomeProps) {
 				<button onClick={newTransactionPopup}>New Transaction</button>
 			</div>
 			<br />
-			<h2>Developer Tools</h2>
-			<div className='dev-panel'>
-				<div className='col cat'>
-					<button onClick={devGetCategories}>
-						Update Category List
-					</button>
+			<button
+				onClick={() => {
+					setShowDevTools((prev) => !prev)
+				}}
+			>
+				{showDevTools ? 'Hide' : 'Show'} Developer Tools
+			</button>
+			{showDevTools && (
+				<div className='dev-panel'>
+					<div className='col cat'>
+						<button onClick={devGetCategories}>
+							Update Category List
+						</button>
 
-					<table>
-						<tr>
-							<th>category_id</th>
-							<th>name</th>
-						</tr>
-						{devCatsList}
-					</table>
-				</div>
-				<div className='col act'>
-					<button onClick={devGetAccounts}>
-						Update Account List
-					</button>
+						<table>
+							<tr>
+								<th>category_id</th>
+								<th>name</th>
+							</tr>
+							{devCatsList}
+						</table>
+					</div>
+					<div className='col act'>
+						<button onClick={devGetAccounts}>
+							Update Account List
+						</button>
 
-					<table>
-						<tr>
-							<th>account_id</th>
-							<th>name</th>
-						</tr>
-						{devActsList}
-					</table>
-				</div>
-				<div className='col trn'>
-					<button onClick={devGetDisplayData}>
-						Update Transaction List
-					</button>
+						<table>
+							<tr>
+								<th>account_id</th>
+								<th>name</th>
+							</tr>
+							{devActsList}
+						</table>
+					</div>
+					<div className='col trn'>
+						<button onClick={devGetDisplayData}>
+							Update Transaction List
+						</button>
 
-					<table>
-						<tr>
-							<th>transaction_id</th>
-							<th>name</th>
-							<th>timestamp</th>
-							<th>amount</th>
-							<th>category_name</th>
-							<th>account_name</th>
-						</tr>
-						{devTransactionList}
-					</table>
+						<table>
+							<tr>
+								<th>transaction_id</th>
+								<th>name</th>
+								<th>timestamp</th>
+								<th>amount</th>
+								<th>category_name</th>
+								<th>account_name</th>
+							</tr>
+							{devTransactionList}
+						</table>
+					</div>
 				</div>
-			</div>
+			)}
+			<TransactionTable context={context} />
 		</>
 	)
 }
