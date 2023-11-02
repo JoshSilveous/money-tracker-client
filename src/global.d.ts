@@ -31,6 +31,10 @@ interface NewTransaction {
 	account_id: number | null
 }
 
+interface NewCategory {
+	name: string
+	description: string | null
+}
 interface Category {
 	category_id: number
 	name: string
@@ -39,6 +43,11 @@ interface Category {
 interface CategoryLite {
 	category_id: number
 	name: string
+}
+
+interface NewAccount {
+	name: string
+	description: string | null
 }
 interface Account {
 	account_id: number
