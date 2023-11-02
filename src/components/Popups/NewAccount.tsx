@@ -1,6 +1,7 @@
 import { useEffect, useRef } from 'react'
 import { ReactComponent as NameIcon } from '../../assets/name.svg'
 import { closeCurrentPopup } from '../../popup/popup'
+import { insertAccount } from '../../api'
 
 interface NewAccountProps {
 	context: Context
@@ -43,42 +44,19 @@ export function NewAccount({ context, handleCreate }: NewAccountProps) {
 			setStatus(false, '')
 		}
 
-		const apiUrl = 'http://localhost:3000/api/insertaccount'
-		const data = {
-			username: context.username,
-			token: context.token,
-			payload: {
-				name: name,
-				description: description,
-			},
+		const newAccount = {
+			name: name,
+			description: description,
 		}
-		const headers = {
-			'Content-Type': 'application/json',
-		}
-		const requestOptions = {
-			method: 'POST',
-			headers,
-			body: JSON.stringify(data),
-		}
-		fetch(apiUrl, requestOptions)
-			.then((res) => {
-				console.log('res recieved:', res)
-				if (res.ok) {
-					return res.json()
-				} else {
-					throw new Error(res.statusText)
-				}
-			})
-			.then((data) => {
-				console.log(data)
+		insertAccount(context, newAccount)
+			.then((account_id) => {
 				setError(false)
 				setStatus(
 					false,
-					`Account "${name}" created, account_id is ${data.account_id}.`
+					`Account "${name}" created, account_id is ${account_id}.`
 				)
-				context.refreshToken(data.refreshedToken)
 				if (handleCreate) {
-					handleCreate(data.account_id)
+					handleCreate(account_id)
 					closeCurrentPopup()
 				}
 			})

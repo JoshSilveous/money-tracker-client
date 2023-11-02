@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { TableDataRow } from './TableDataRow'
-import { fetchDisplayData } from './functions/fetchDisplayData'
+import { fetchDisplayData } from '../../api'
 
 interface TransactionTableProps {
 	context: Context
@@ -32,8 +32,8 @@ export function TransactionTable({ context }: TransactionTableProps) {
 
 	const [currentData, setCurrentData] = useState<DisplayTransaction[]>()
 	function updateData() {
-		fetchDisplayData(context.username, context.token, pageSettings).then(
-			(res) => setCurrentData(res)
+		fetchDisplayData(context, pageSettings).then((res) =>
+			setCurrentData(res)
 		)
 	}
 	useEffect(() => {

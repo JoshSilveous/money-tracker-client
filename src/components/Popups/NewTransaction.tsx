@@ -4,7 +4,7 @@ import { ReactComponent as DollarIcon } from '../../assets/dollar.svg'
 import { triggerPopup } from '../../popup/popup'
 import { NewAccount } from './NewAccount'
 import { NewCategory } from './NewCategory'
-import { insertTransaction } from './functions/insertTransaction'
+import { insertTransaction } from '../../api'
 
 interface NewTransactionProps {
 	context: Context

@@ -1,11 +1,13 @@
-export function devFetchCategories(
-	username: string,
-	token: string
-): Promise<CategoryLite[]> {
-	const apiUrl = 'http://localhost:3000/api/getallcategories'
+export function insertTransaction(
+	context: Context,
+	newTransaction: NewTransaction
+) {
+	const apiUrl = 'http://localhost:3000/api/inserttransaction'
+
 	const data = {
-		username: username,
-		token: token,
+		username: context.username,
+		token: context.token,
+		payload: newTransaction,
 	}
 	const headers = {
 		'Content-Type': 'application/json',
@@ -15,10 +17,8 @@ export function devFetchCategories(
 		headers,
 		body: JSON.stringify(data),
 	}
-
 	return fetch(apiUrl, requestOptions)
 		.then((res) => {
-			console.log('res recieved:', res)
 			if (res.ok) {
 				return res.json()
 			} else {
@@ -26,6 +26,7 @@ export function devFetchCategories(
 			}
 		})
 		.then((data) => {
-			return data.categories as CategoryLite[]
+			context.refreshToken(data.refreshedToken)
+			return data.transaction_id as number
 		})
 }

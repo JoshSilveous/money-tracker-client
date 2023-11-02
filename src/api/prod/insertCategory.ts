@@ -1,11 +1,10 @@
-export function devFetchAccounts(
-	username: string,
-	token: string
-): Promise<AccountLite[]> {
-	const apiUrl = 'http://localhost:3000/api/getallaccounts'
+export function insertCategory(context: Context, newCategory: NewCategory) {
+	const apiUrl = 'http://localhost:3000/api/insertcategory'
+
 	const data = {
-		username: username,
-		token: token,
+		username: context.username,
+		token: context.token,
+		payload: newCategory,
 	}
 	const headers = {
 		'Content-Type': 'application/json',
@@ -17,7 +16,6 @@ export function devFetchAccounts(
 	}
 	return fetch(apiUrl, requestOptions)
 		.then((res) => {
-			console.log('res recieved:', res)
 			if (res.ok) {
 				return res.json()
 			} else {
@@ -25,6 +23,7 @@ export function devFetchAccounts(
 			}
 		})
 		.then((data) => {
-			return data.accounts as AccountLite[]
+			context.refreshToken(data.refreshedToken)
+			return data.category_id as number
 		})
 }

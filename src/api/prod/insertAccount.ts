@@ -1,19 +1,10 @@
-/**
- * Uses an API call to insert a Transaction into the database.
- * @param context
- * @param newTransaction
- * @returns
- */
-export function insertTransaction(
-	context: Context,
-	newTransaction: NewTransaction
-) {
-	const apiUrl = 'http://localhost:3000/api/inserttransaction'
+export function insertAccount(context: Context, newAccount: NewAccount) {
+	const apiUrl = 'http://localhost:3000/api/insertaccount'
 
 	const data = {
 		username: context.username,
 		token: context.token,
-		payload: newTransaction,
+		payload: newAccount,
 	}
 	const headers = {
 		'Content-Type': 'application/json',
@@ -33,6 +24,6 @@ export function insertTransaction(
 		})
 		.then((data) => {
 			context.refreshToken(data.refreshedToken)
-			return data.transaction_id as Transaction['transaction_id']
+			return data.account_id as number
 		})
 }

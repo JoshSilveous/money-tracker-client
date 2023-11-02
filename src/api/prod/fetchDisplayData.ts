@@ -1,13 +1,20 @@
+/**
+ * Retrieves transaction data from the database, in `DisplayTransaction`
+ * format, based on the provided `PageSettings`.
+ *
+ * @param context The `Context` object
+ * @param pageSettings The `PageSettings` object used to tune the query.
+ * @returns A promise, which resolves to `DisplayTransaction[]`
+ */
 export function fetchDisplayData(
-	username: string,
-	token: string,
+	context: Context,
 	pageSettings: PageSettings
 ): Promise<DisplayTransaction[]> {
 	const apiUrl = 'http://localhost:3000/api/getdisplaydata'
 
 	const data = {
-		username: username,
-		token: token,
+		username: context.username,
+		token: context.token,
 		payload: pageSettings,
 	}
 	const headers = {
@@ -28,6 +35,7 @@ export function fetchDisplayData(
 			}
 		})
 		.then((data) => {
+			context.refreshToken(data.refreshedToken)
 			return data.displayData as DisplayTransaction[]
 		})
 }

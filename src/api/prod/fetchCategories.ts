@@ -1,18 +1,9 @@
-export function devFetchDisplayData(
-	username: string,
-	token: string
-): Promise<DisplayTransaction[]> {
-	const apiUrl = 'http://localhost:3000/api/getdisplaydata'
+export function fetchCategories(context: Context): Promise<CategoryLite[]> {
+	const apiUrl = 'http://localhost:3000/api/getallcategories'
 
 	const data = {
-		username: username,
-		token: token,
-		payload: {
-			resPerPage: 100,
-			thisPage: 1,
-			orderBy: 'timestamp',
-			orderByDirection: 'DESC',
-		},
+		username: context.username,
+		token: context.token,
 	}
 	const headers = {
 		'Content-Type': 'application/json',
@@ -32,6 +23,7 @@ export function devFetchDisplayData(
 			}
 		})
 		.then((data) => {
-			return data.displayData as DisplayTransaction[]
+			context.refreshToken(data.refreshedToken)
+			return data.categories as CategoryLite[]
 		})
 }

@@ -1,6 +1,7 @@
 import { useEffect, useRef } from 'react'
 import { ReactComponent as NameIcon } from '../../assets/name.svg'
 import { closeCurrentPopup } from '../../popup/popup'
+import { insertCategory } from '../../api'
 
 interface NewCategoryProps {
 	context: Context
@@ -33,7 +34,10 @@ export function NewCategory({ context, handleCreate }: NewCategoryProps) {
 
 	function createCategory() {
 		const name = inputNameRef.current!.value
-		const description = inputDescriptionRef.current!.value
+		const description =
+			inputDescriptionRef.current!.value === ''
+				? null
+				: inputDescriptionRef.current!.value
 
 		if (name.length === 0) {
 			setError(true)
@@ -43,42 +47,20 @@ export function NewCategory({ context, handleCreate }: NewCategoryProps) {
 			setStatus(false, '')
 		}
 
-		const apiUrl = 'http://localhost:3000/api/insertcategory'
-		const data = {
-			username: context.username,
-			token: context.token,
-			payload: {
-				name: name,
-				description: description,
-			},
+		const newCategory = {
+			name: name,
+			description: description,
 		}
-		const headers = {
-			'Content-Type': 'application/json',
-		}
-		const requestOptions = {
-			method: 'POST',
-			headers,
-			body: JSON.stringify(data),
-		}
-		fetch(apiUrl, requestOptions)
-			.then((res) => {
-				console.log('res recieved:', res)
-				if (res.ok) {
-					return res.json()
-				} else {
-					throw new Error(res.statusText)
-				}
-			})
-			.then((data) => {
-				console.log(data)
+
+		insertCategory(context, newCategory)
+			.then((category_id) => {
 				setError(false)
 				setStatus(
 					false,
-					`Category "${name}" created, category_id is ${data.newCategoryID}.`
+					`Category "${name}" created, category_id is ${category_id}.`
 				)
-				context.refreshToken(data.refreshedToken)
 				if (handleCreate) {
-					handleCreate(data.account_id)
+					handleCreate(category_id)
 					closeCurrentPopup()
 				}
 			})
