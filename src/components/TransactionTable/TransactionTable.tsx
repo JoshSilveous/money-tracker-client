@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { TableDataRow } from './TableDataRow'
+import { fetchDisplayData } from './functions/fetchDisplayData'
 
 interface TransactionTableProps {
 	context: Context
@@ -12,7 +13,6 @@ export function TransactionTable({ context }: TransactionTableProps) {
 		orderBy: 'timestamp',
 		orderByDirection: 'DESC',
 	})
-	console.log('pageSettings:', pageSettings)
 
 	function handlePageSettingSwitch(field: PageSettings['orderBy']) {
 		if (pageSettings.orderBy === field) {
@@ -31,50 +31,14 @@ export function TransactionTable({ context }: TransactionTableProps) {
 	}
 
 	const [currentData, setCurrentData] = useState<DisplayTransaction[]>()
-	function updateData(): void {
-		console.log()
-		const apiUrl = 'http://localhost:3000/api/getdisplaydata'
-
-		const data = {
-			username: context.username,
-			token: context.token,
-			payload: pageSettings,
-		}
-		const headers = {
-			'Content-Type': 'application/json',
-		}
-		const requestOptions = {
-			method: 'POST',
-			headers,
-			body: JSON.stringify(data),
-		}
-		console.log('fetching with payload', pageSettings)
-		console.time('fetch request finished')
-		fetch(apiUrl, requestOptions)
-			.then((res) => {
-				if (res.ok) {
-					return res.json()
-				} else {
-					throw new Error(res.statusText)
-				}
-			})
-			.then((data) => {
-				setCurrentData(data.displayData)
-				console.timeEnd('fetch request finished')
-			})
-			.catch((err) => {
-				console.log('error while running dev command getAccounts')
-				console.error(err)
-				console.timeEnd('fetch request finished')
-			})
+	function updateData() {
+		fetchDisplayData(context.username, context.token, pageSettings).then(
+			(res) => setCurrentData(res)
+		)
 	}
-
 	useEffect(() => {
 		updateData()
 	}, [pageSettings])
-
-	console.log('Data retrieved in TransactionTable:')
-	console.log(currentData)
 
 	const tableDisplay = !currentData ? (
 		<div>Loading...</div>

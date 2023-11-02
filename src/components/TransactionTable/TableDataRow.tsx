@@ -3,10 +3,6 @@ interface TableDataRowProps {
 	transactionData: DisplayTransaction
 }
 export function TableDataRow({ transactionData }: TableDataRowProps) {
-	if (false) {
-		console.log(transactionData.transaction_id)
-	}
-
 	return (
 		<tr>
 			<td>{transactionData.timestamp}</td>
