@@ -62,7 +62,6 @@ export function NewTransaction({ context }: NewTransactionProps) {
 		const valAccount = selectAccountRef.current!.value
 		const valDate = inputDateRef.current!.value
 		const valNotes = inputNotesRef.current!.value
-
 		let error = false
 		if (!valName) {
 			error = true
@@ -86,17 +85,20 @@ export function NewTransaction({ context }: NewTransactionProps) {
 		}
 		if (!error) {
 			const apiUrl = 'http://localhost:3000/api/inserttransaction'
+
+			const newTransaction: NewTransaction = {
+				name: valName,
+				timestamp: valDate,
+				notes: valNotes,
+				amount: parseFloat(valAmount),
+				category_id: valCategory ? parseInt(valCategory) : null,
+				account_id: valAccount ? parseInt(valAccount) : null,
+			}
+
 			const data = {
 				username: context.username,
 				token: context.token,
-				payload: {
-					name: valName,
-					timestamp: valDate,
-					notes: valNotes,
-					amount: parseInt(valAmount),
-					category_id: valCategory ? parseInt(valCategory) : null,
-					account_id: valAccount ? parseInt(valAccount) : null,
-				},
+				payload: newTransaction,
 			}
 			const headers = {
 				'Content-Type': 'application/json',
