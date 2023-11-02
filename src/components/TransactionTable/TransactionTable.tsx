@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { TableDataRow } from './TableDataRow'
 
 interface TransactionTableProps {
 	context: Context
@@ -104,7 +105,6 @@ export function TransactionTable({ context }: TransactionTableProps) {
 	const tableDisplay = !currentData ? (
 		<div>Loading...</div>
 	) : (
-		// refactor to CSS grid and make this much MUCH cleaner
 		<table>
 			<tr>
 				<th
@@ -163,17 +163,9 @@ export function TransactionTable({ context }: TransactionTableProps) {
 					Account
 				</th>
 			</tr>
-			{currentData.map((data) => {
-				return (
-					<tr>
-						<td>{data.timestamp}</td>
-						<td>{data.name}</td>
-						<td>{data.amount}</td>
-						<td>{data.category_name}</td>
-						<td>{data.account_name}</td>
-					</tr>
-				)
-			})}
+			{currentData.map((data) => (
+				<TableDataRow transactionData={data} />
+			))}
 		</table>
 	)
 
