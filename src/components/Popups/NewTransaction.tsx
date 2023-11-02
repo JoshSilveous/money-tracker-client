@@ -40,15 +40,6 @@ export function NewTransaction({ context }: NewTransactionProps) {
 		updateActList()
 	}, [])
 
-	interface LightCategory {
-		category_id: number
-		name: string
-	}
-	interface LightAccount {
-		account_id: number
-		name: string
-	}
-
 	const [catList, setCatList] = useState<React.ReactNode[]>()
 	const [actList, setActList] = useState<React.ReactNode[]>()
 
@@ -216,7 +207,7 @@ export function NewTransaction({ context }: NewTransactionProps) {
 			})
 			.then((data) => {
 				setActList(
-					data.accounts.map((account: LightAccount) => {
+					data.accounts.map((account: AccountLite) => {
 						return (
 							<option value={account.account_id}>
 								{account.name}
@@ -289,7 +280,7 @@ export function NewTransaction({ context }: NewTransactionProps) {
 			})
 			.then((data) => {
 				setCatList(
-					data.categories.map((category: LightCategory) => {
+					data.categories.map((category: CategoryLite) => {
 						return (
 							<option value={category.category_id}>
 								{category.name}

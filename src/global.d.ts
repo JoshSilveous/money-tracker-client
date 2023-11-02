@@ -49,3 +49,9 @@ interface AccountLite {
 	account_id: number
 	name: string
 }
+interface PageSettings {
+	resPerPage: 10 | 20 | 30
+	thisPage: number
+	orderBy: 'timestamp' | 'name' | 'category_name' | 'account_name' | 'amount'
+	orderByDirection: 'ASC' | 'DESC'
+}

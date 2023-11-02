@@ -5,32 +5,6 @@ interface TransactionTableProps {
 	context: Context
 }
 
-interface PageSettings {
-	/**
-	 * Results per page
-	 */
-	resPerPage: 10 | 20 | 30
-	/**
-	 * Page the user is currently on
-	 */
-	thisPage: number
-	/**
-	 * Which field to order retrieved data by
-	 */
-	orderBy: 'timestamp' | 'name' | 'category_name' | 'account_name' | 'amount'
-	/**
-	 * Direction to order the retrieved data by
-	 */
-	orderByDirection: 'ASC' | 'DESC'
-}
-interface RetrievedData {
-	transaction_id: number
-	name: string
-	timestamp: string
-	amount: number
-	category_name: string
-	account_name: string
-}
 export function TransactionTable({ context }: TransactionTableProps) {
 	const [pageSettings, setPageSettings] = useState<PageSettings>({
 		resPerPage: 10,
@@ -56,7 +30,7 @@ export function TransactionTable({ context }: TransactionTableProps) {
 		}
 	}
 
-	const [currentData, setCurrentData] = useState<RetrievedData[]>()
+	const [currentData, setCurrentData] = useState<DisplayTransaction[]>()
 	function updateData(): void {
 		console.log()
 		const apiUrl = 'http://localhost:3000/api/getdisplaydata'
