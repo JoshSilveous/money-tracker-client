@@ -1,0 +1,41 @@
+.dev-panel {
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
+	background-color: darkred;
+	padding: 30px;
+	border-radius: 20px;
+
+	.row {
+		display: flex;
+		flex-direction: row;
+		gap: 10px;
+		justify-content: center;
+
+		p {
+			max-width: 600px;
+			word-wrap: break-word;
+		}
+
+		.table-switch {
+			button {
+				border-radius: 0px;
+				box-shadow: inset 0 0 0 1px #000;
+				background-color: gray;
+				&.active {
+					background-color: rgb(199, 199, 199);
+				}
+			}
+		}
+	}
+	.table-container {
+		width: fit-content;
+		height: 300px;
+		overflow: auto;
+		td,
+		th {
+			text-align: left;
+			padding: 0px 10px;
+		}
+	}
+}
