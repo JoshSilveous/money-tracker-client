@@ -1,4 +1,4 @@
-export function devGetDisplayData(
+export function devFetchDisplayData(
 	username: string,
 	token: string
 ): Promise<DisplayTransaction[]> {

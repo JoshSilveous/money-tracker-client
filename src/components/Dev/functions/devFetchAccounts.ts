@@ -1,8 +1,8 @@
-export function devGetCategories(
+export function devFetchAccounts(
 	username: string,
 	token: string
-): Promise<CategoryLite[]> {
-	const apiUrl = 'http://localhost:3000/api/getallcategories'
+): Promise<AccountLite[]> {
+	const apiUrl = 'http://localhost:3000/api/getallaccounts'
 	const data = {
 		username: username,
 		token: token,
@@ -15,7 +15,6 @@ export function devGetCategories(
 		headers,
 		body: JSON.stringify(data),
 	}
-
 	return fetch(apiUrl, requestOptions)
 		.then((res) => {
 			console.log('res recieved:', res)
@@ -26,6 +25,6 @@ export function devGetCategories(
 			}
 		})
 		.then((data) => {
-			return data.categories as CategoryLite[]
+			return data.accounts as AccountLite[]
 		})
 }

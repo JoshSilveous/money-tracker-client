@@ -1,6 +1,6 @@
-import { devGetCategories } from './functions/devGetCategories'
-import { devGetAccounts } from './functions/devGetAccounts'
-import { devGetDisplayData } from './functions/devGetDisplayData'
+import { devFetchCategories } from './functions/devFetchCategories'
+import { devFetchAccounts } from './functions/devFetchAccounts'
+import { devFetchDisplayData } from './functions/devFetchDisplayData'
 import { useEffect, useState } from 'react'
 import { insertTestData } from './functions/insertTestData'
 import './DevPanel.scss'
@@ -18,26 +18,26 @@ export function DevPanel({ context }: DevPanelProps) {
 	const [currentTable, setCurrentTable] = useState<CurrentTable>('account')
 
 	useEffect(() => {
-		devGetCategories(context.username, context.token)
-		devGetAccounts(context.username, context.token)
-		devGetDisplayData(context.username, context.token)
+		devFetchCategories(context.username, context.token)
+		devFetchAccounts(context.username, context.token)
+		devFetchDisplayData(context.username, context.token)
 	}, [])
 
 	function updateCategories() {
 		setCurrentTable('category')
-		devGetCategories(context.username, context.token).then((data) =>
+		devFetchCategories(context.username, context.token).then((data) =>
 			setDevCatsList(data)
 		)
 	}
 	function updateAccounts() {
 		setCurrentTable('account')
-		devGetAccounts(context.username, context.token).then((data) =>
+		devFetchAccounts(context.username, context.token).then((data) =>
 			setDevActsList(data)
 		)
 	}
 	function updateDisplayData() {
 		setCurrentTable('transaction')
-		devGetDisplayData(context.username, context.token).then((data) =>
+		devFetchDisplayData(context.username, context.token).then((data) =>
 			setDevTransactionList(data)
 		)
 	}
