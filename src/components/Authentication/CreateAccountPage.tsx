@@ -3,7 +3,7 @@ import { useRef } from 'react'
 import { ReactComponent as UsernameIcon } from '../../assets/profile.svg'
 import { ReactComponent as PasswordIcon } from '../../assets/password.svg'
 
-export function CreateAccount() {
+export function CreateAccountPage() {
 	const usernameInputRef = useRef<HTMLInputElement>(null)
 	const passwordInputRef = useRef<HTMLInputElement>(null)
 	const passwordConfirmInputRef = useRef<HTMLInputElement>(null)

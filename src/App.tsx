@@ -2,8 +2,8 @@ import { useState } from 'react'
 import { Home } from './components/Home'
 import './App.scss'
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
-import { Login } from './components/Authentication/Login'
-import { CreateAccount } from './components/Authentication/CreateAccount'
+import { LoginPage } from './components/Authentication/LoginPage'
+import { CreateAccountPage } from './components/Authentication/CreateAccountPage'
 
 function App() {
 	const [sessionInfo, setSessionInfo] = useState({ username: '', token: '' })
@@ -27,11 +27,11 @@ function App() {
 				<Routes>
 					<Route
 						path='/authentication/login'
-						element={<Login setSessionInfo={setSessionInfo} />}
+						element={<LoginPage setSessionInfo={setSessionInfo} />}
 					/>
 					<Route
 						path='/authentication/create-account'
-						element={<CreateAccount />}
+						element={<CreateAccountPage />}
 					/>
 				</Routes>
 			)}

@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom'
 import { useRef } from 'react'
 import { ReactComponent as UsernameIcon } from '../../assets/profile.svg'
 import { ReactComponent as PasswordIcon } from '../../assets/password.svg'
-interface LoginProps {
+interface LoginPageProps {
 	setSessionInfo: React.Dispatch<
 		React.SetStateAction<{
 			username: string
@@ -10,7 +10,7 @@ interface LoginProps {
 		}>
 	>
 }
-export function Login({ setSessionInfo }: LoginProps) {
+export function LoginPage({ setSessionInfo }: LoginPageProps) {
 	const usernameInputRef = useRef<HTMLInputElement>(null)
 	const passwordInputRef = useRef<HTMLInputElement>(null)
 	const statusDivRef = useRef<HTMLDivElement>(null)
