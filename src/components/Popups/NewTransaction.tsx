@@ -4,6 +4,7 @@ import { ReactComponent as DollarIcon } from '../../assets/dollar.svg'
 import { triggerPopup } from '../../popup/popup'
 import { NewAccount } from './NewAccount'
 import { NewCategory } from './NewCategory'
+import { insertTransaction } from './functions/insertTransaction'
 
 interface NewTransactionProps {
 	context: Context
@@ -43,7 +44,8 @@ export function NewTransaction({ context }: NewTransactionProps) {
 	const [catList, setCatList] = useState<React.ReactNode[]>()
 	const [actList, setActList] = useState<React.ReactNode[]>()
 
-	function createTransaction() {
+	function handleinsertTransaction() {
+		// first validate the input
 		const valName = inputNameRef.current!.value
 		const valAmount =
 			inputAmountRef.current!.value +
@@ -75,8 +77,6 @@ export function NewTransaction({ context }: NewTransactionProps) {
 			inputDateRef.current!.parentElement!.classList.remove('error')
 		}
 		if (!error) {
-			const apiUrl = 'http://localhost:3000/api/inserttransaction'
-
 			const newTransaction: NewTransaction = {
 				name: valName,
 				timestamp: valDate,
@@ -86,34 +86,12 @@ export function NewTransaction({ context }: NewTransactionProps) {
 				account_id: valAccount ? parseInt(valAccount) : null,
 			}
 
-			const data = {
-				username: context.username,
-				token: context.token,
-				payload: newTransaction,
-			}
-			const headers = {
-				'Content-Type': 'application/json',
-			}
-			const requestOptions = {
-				method: 'POST',
-				headers,
-				body: JSON.stringify(data),
-			}
-			fetch(apiUrl, requestOptions)
-				.then((res) => {
-					if (res.ok) {
-						return res.json()
-					} else {
-						throw new Error(res.statusText)
-					}
-				})
-				.then((data) => {
+			insertTransaction(context, newTransaction)
+				.then((transaction_id) => {
 					setStatus(
 						false,
-						`Category "${valName}" created, transaction_id is ${data.transaction_id}.`
+						`Category "${valName}" created, transaction_id is ${transaction_id}.`
 					)
-					console.log(data)
-					context.refreshToken(data.refreshedToken)
 				})
 				.catch((err) => {
 					if (err.message === 'ERROR_TOKEN_EXPIRED') {
@@ -403,7 +381,9 @@ export function NewTransaction({ context }: NewTransactionProps) {
 				</div>
 			</div>
 			<div className='status-text' ref={statusDivRef} />
-			<button onClick={createTransaction}>Create Transaction</button>
+			<button onClick={handleinsertTransaction}>
+				Create Transaction
+			</button>
 		</div>
 	)
 }
