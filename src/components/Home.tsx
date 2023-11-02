@@ -4,6 +4,7 @@ import { NewCategory } from './Popups/NewCategory'
 import { NewAccount } from './Popups/NewAccount'
 import { NewTransaction } from './Popups/NewTransaction'
 import { TransactionTable } from './TransactionTable/TransactionTable'
+import { insertTestData } from './insertTestData'
 interface HomeProps {
 	context: Context
 }
@@ -17,29 +18,13 @@ export function Home({ context }: HomeProps) {
 	function newTransactionPopup() {
 		triggerPopup(<NewTransaction context={context} />)
 	}
-	const [devCatsList, setDevCatsList] = React.useState()
-	const [devActsList, setDevActsList] = React.useState()
+	const [devCatsList, setDevCatsList] = React.useState<CategoryLite[]>()
+	const [devActsList, setDevActsList] = React.useState<AccountLite[]>()
 	const [devTransactionList, setDevTransactionList] = React.useState()
 
 	// (dev only)
 	const [showDevTools, setShowDevTools] = useState(false)
-	interface Category {
-		category_id: number
-		name: string
-	}
-	interface Account {
-		account_id: number
-		name: string
-	}
-	interface Transaction {
-		transaction_id: number
-		name: string
-		timestamp: string
-		amount: number
-		category_name: string
-		account_name: string
-	}
-	function devGetCategories(): Category[] | void {
+	function devGetCategories(): void {
 		const apiUrl = 'http://localhost:3000/api/getallcategories'
 		const data = {
 			username: context.username,
@@ -63,23 +48,14 @@ export function Home({ context }: HomeProps) {
 				}
 			})
 			.then((data) => {
-				setDevCatsList(
-					data.categories.map((category: Category) => {
-						return (
-							<tr>
-								<th>{category.category_id}</th>
-								<td>{category.name}</td>
-							</tr>
-						)
-					})
-				)
+				setDevCatsList(data.categories)
 			})
 			.catch((err) => {
 				console.log('error while running dev command getCategories')
 				console.error(err)
 			})
 	}
-	function devGetAccounts(): Category[] | void {
+	function devGetAccounts(): void {
 		const apiUrl = 'http://localhost:3000/api/getallaccounts'
 		const data = {
 			username: context.username,
@@ -103,16 +79,7 @@ export function Home({ context }: HomeProps) {
 				}
 			})
 			.then((data) => {
-				setDevActsList(
-					data.accounts.map((account: Account) => {
-						return (
-							<tr>
-								<th>{account.account_id}</th>
-								<td>{account.name}</td>
-							</tr>
-						)
-					})
-				)
+				setDevActsList(data.accounts)
 			})
 			.catch((err) => {
 				console.log('error while running dev command getAccounts')
@@ -151,7 +118,7 @@ export function Home({ context }: HomeProps) {
 			})
 			.then((data) => {
 				setDevTransactionList(
-					data.displayData.map((transaction: Transaction) => {
+					data.displayData.map((transaction: DisplayTransaction) => {
 						return (
 							<tr>
 								<th>{transaction.transaction_id}</th>
@@ -212,7 +179,16 @@ export function Home({ context }: HomeProps) {
 								<th>category_id</th>
 								<th>name</th>
 							</tr>
-							{devCatsList}
+							{devCatsList
+								? devCatsList.map((category: CategoryLite) => {
+										return (
+											<tr>
+												<th>{category.category_id}</th>
+												<td>{category.name}</td>
+											</tr>
+										)
+								  })
+								: ''}
 						</table>
 					</div>
 					<div className='col act'>
@@ -225,7 +201,16 @@ export function Home({ context }: HomeProps) {
 								<th>account_id</th>
 								<th>name</th>
 							</tr>
-							{devActsList}
+							{devActsList
+								? devActsList.map((account: AccountLite) => {
+										return (
+											<tr>
+												<th>{account.account_id}</th>
+												<td>{account.name}</td>
+											</tr>
+										)
+								  })
+								: ''}
 						</table>
 					</div>
 					<div className='col trn'>
@@ -244,6 +229,19 @@ export function Home({ context }: HomeProps) {
 							</tr>
 							{devTransactionList}
 						</table>
+					</div>
+					<div className='col'>
+						<button
+							onClick={() =>
+								insertTestData(
+									context,
+									devCatsList!,
+									devActsList!
+								)
+							}
+						>
+							Insert Test Data
+						</button>
 					</div>
 				</div>
 			)}
