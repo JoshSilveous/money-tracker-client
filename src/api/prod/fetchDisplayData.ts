@@ -1,17 +1,17 @@
+import { API_URL } from '../API_URL'
+
 /**
  * Retrieves transaction data from the database, in `DisplayTransaction`
  * format, based on the provided `PageSettings`.
  *
- * @param context The `Context` object
- * @param pageSettings The `PageSettings` object used to tune the query.
- * @returns A promise, which resolves to `DisplayTransaction[]`
+ * @param context The {@linkcode Context} object
+ * @param pageSettings The {@linkcode PageSettings} object used to tune the query.
+ * @returns A promise, which resolves to a {@linkcode DisplayTransaction DisplayTransaction[]}
  */
 export function fetchDisplayData(
 	context: Context,
 	pageSettings: PageSettings
 ): Promise<DisplayTransaction[]> {
-	const apiUrl = 'http://localhost:3000/api/getdisplaydata'
-
 	const data = {
 		username: context.username,
 		token: context.token,
@@ -25,7 +25,7 @@ export function fetchDisplayData(
 		headers,
 		body: JSON.stringify(data),
 	}
-	return fetch(apiUrl, requestOptions)
+	return fetch(API_URL + 'getdisplaydata', requestOptions)
 		.then((res) => {
 			console.log('res recieved:', res)
 			if (res.ok) {

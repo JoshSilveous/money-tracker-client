@@ -1,6 +1,12 @@
-export function insertCategory(context: Context, newCategory: NewCategory) {
-	const apiUrl = 'http://localhost:3000/api/insertcategory'
+import { API_URL } from '../API_URL'
 
+/**
+ * Inserts a {@link NewCategory New Category} into the user's database.
+ * @param context The {@linkcode Context} object
+ * @param newCategory The {@linkcode NewCategory} object
+ * @returns A promise, which resolves to the new category's assigned `category_id`
+ */
+export function insertCategory(context: Context, newCategory: NewCategory) {
 	const data = {
 		username: context.username,
 		token: context.token,
@@ -14,7 +20,7 @@ export function insertCategory(context: Context, newCategory: NewCategory) {
 		headers,
 		body: JSON.stringify(data),
 	}
-	return fetch(apiUrl, requestOptions)
+	return fetch(API_URL + 'insertcategory', requestOptions)
 		.then((res) => {
 			if (res.ok) {
 				return res.json()

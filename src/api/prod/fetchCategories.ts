@@ -1,6 +1,11 @@
-export function fetchCategories(context: Context): Promise<CategoryLite[]> {
-	const apiUrl = 'http://localhost:3000/api/getallcategories'
+import { API_URL } from '../API_URL'
 
+/**
+ * Retrieves all categories in a user's file from the database.
+ * @param context The {@linkcode Context} object
+ * @returns A promise, which resolves to a {@linkcode CategoryLite CategoryLite[]}
+ */
+export function fetchCategories(context: Context): Promise<CategoryLite[]> {
 	const data = {
 		username: context.username,
 		token: context.token,
@@ -13,7 +18,7 @@ export function fetchCategories(context: Context): Promise<CategoryLite[]> {
 		headers,
 		body: JSON.stringify(data),
 	}
-	return fetch(apiUrl, requestOptions)
+	return fetch(API_URL + 'getallcategories', requestOptions)
 		.then((res) => {
 			console.log('res recieved:', res)
 			if (res.ok) {

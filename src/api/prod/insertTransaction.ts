@@ -1,9 +1,15 @@
+import { API_URL } from '../API_URL'
+
+/**
+ * Inserts a {@link NewTransaction New Transaction} into the user's database.
+ * @param context The {@linkcode Context} object
+ * @param newTransaction The {@linkcode NewTransaction} object
+ * @returns A promise, which resolves to the new transaction's assigned `transaction_id`
+ */
 export function insertTransaction(
 	context: Context,
 	newTransaction: NewTransaction
 ) {
-	const apiUrl = 'http://localhost:3000/api/inserttransaction'
-
 	const data = {
 		username: context.username,
 		token: context.token,
@@ -17,7 +23,7 @@ export function insertTransaction(
 		headers,
 		body: JSON.stringify(data),
 	}
-	return fetch(apiUrl, requestOptions)
+	return fetch(API_URL + 'inserttransaction', requestOptions)
 		.then((res) => {
 			if (res.ok) {
 				return res.json()
