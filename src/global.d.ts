@@ -4,6 +4,11 @@ interface Context {
 	refreshToken: (newToken: string) => void
 }
 
+interface Credentials {
+	username: string
+	password: string
+}
+
 interface Transaction {
 	transaction_id: number
 	name: string

@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom'
 import { useRef } from 'react'
 import { ReactComponent as UsernameIcon } from '../../assets/profile.svg'
 import { ReactComponent as PasswordIcon } from '../../assets/password.svg'
+import { createAccount } from '../../api/prod/createAccount'
 
 export function CreateAccountPage() {
 	const usernameInputRef = useRef<HTMLInputElement>(null)
@@ -46,7 +47,7 @@ export function CreateAccountPage() {
 		}
 	}
 
-	function createUser() {
+	function handleCreateButton() {
 		// Check if password matches confirmation
 		if (
 			passwordInputRef.current!.value !==
@@ -82,29 +83,15 @@ export function CreateAccountPage() {
 			setErrors(false, false, false)
 		}
 
-		// Make API Call
-		const apiUrl = 'http://localhost:3000/api/createuser'
-		const data = {
+		const credentials = {
 			username: usernameInputRef.current!.value,
 			password: passwordInputRef.current!.value,
 		}
-		const headers = {
-			'Content-Type': 'application/json',
-		}
-		const requestOptions = {
-			method: 'POST',
-			headers,
-			body: JSON.stringify(data),
-		}
 
-		fetch(apiUrl, requestOptions)
-			.then((res) => {
-				if (res.ok) {
-					setStatus(false, 'Account created.')
-					setErrors(false, false, false)
-				} else {
-					throw new Error(res.statusText)
-				}
+		createAccount(credentials)
+			.then(() => {
+				setStatus(false, 'Account created.')
+				setErrors(false, false, false)
 			})
 			.catch((err) => {
 				if (err.message === 'ERROR_DUPLICATE_USERNAME') {
@@ -243,7 +230,7 @@ export function CreateAccountPage() {
 				</div>
 
 				<div className='status-text' ref={statusDivRef} />
-				<button onClick={createUser}>CREATE ACCOUNT</button>
+				<button onClick={handleCreateButton}>CREATE ACCOUNT</button>
 				<hr />
 
 				<Link to='/authentication/login' className='button-like'>

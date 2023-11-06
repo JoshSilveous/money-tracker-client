@@ -27,7 +27,6 @@ export function fetchDisplayData(
 	}
 	return fetch(API_URL + 'getdisplaydata', requestOptions)
 		.then((res) => {
-			console.log('res recieved:', res)
 			if (res.ok) {
 				return res.json()
 			} else {

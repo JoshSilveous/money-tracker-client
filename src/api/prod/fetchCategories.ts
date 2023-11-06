@@ -20,7 +20,6 @@ export function fetchCategories(context: Context): Promise<CategoryLite[]> {
 	}
 	return fetch(API_URL + 'getallcategories', requestOptions)
 		.then((res) => {
-			console.log('res recieved:', res)
 			if (res.ok) {
 				return res.json()
 			} else {

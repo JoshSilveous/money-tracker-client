@@ -20,7 +20,6 @@ export function fetchAccounts(context: Context): Promise<AccountLite[]> {
 	}
 	return fetch(API_URL + 'getallaccounts', requestOptions)
 		.then((res) => {
-			console.log('res recieved:', res)
 			if (res.ok) {
 				return res.json()
 			} else {
@@ -31,7 +30,4 @@ export function fetchAccounts(context: Context): Promise<AccountLite[]> {
 			context.refreshToken(data.refreshedToken)
 			return data.accounts as AccountLite[]
 		})
-}
-export interface test {
-	name: string
 }
