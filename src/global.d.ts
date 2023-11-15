@@ -64,3 +64,7 @@ interface PageSettings {
 	orderBy: 'timestamp' | 'name' | 'category_name' | 'account_name' | 'amount'
 	orderByDirection: 'ASC' | 'DESC'
 }
+interface UserCredentials {
+	username: string
+	password: string
+}
