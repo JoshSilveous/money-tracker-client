@@ -1,7 +1,7 @@
 import { API_URL } from '../API_URL'
 
 /**
- * Inserts a {@link NewTransaction New Transaction} into the user's database.
+ * Inserts a new transaction into the user's database.
  * @param context The {@linkcode Context} object
  * @param newTransaction The {@linkcode NewTransaction} object
  * @returns A promise, which resolves to the new transaction's assigned `transaction_id`

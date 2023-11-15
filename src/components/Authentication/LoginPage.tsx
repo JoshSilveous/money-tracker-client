@@ -3,7 +3,6 @@ import { useRef } from 'react'
 import { ReactComponent as UsernameIcon } from '../../assets/profile.svg'
 import { ReactComponent as PasswordIcon } from '../../assets/password.svg'
 import { loginUser } from '../../api'
-import { loginUser } from '../../api'
 interface LoginPageProps {
 	setSessionInfo: React.Dispatch<
 		React.SetStateAction<{
