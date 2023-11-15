@@ -4,7 +4,7 @@ import { ReactComponent as DollarIcon } from '../../assets/dollar.svg'
 import { triggerPopup } from '../../popup/popup'
 import { NewAccount } from './NewAccount'
 import { NewCategory } from './NewCategory'
-import { insertTransaction } from '../../api'
+import { fetchAccounts, fetchCategories, insertTransaction } from '../../api'
 
 interface NewTransactionProps {
 	context: Context
@@ -80,7 +80,7 @@ export function NewTransaction({ context }: NewTransactionProps) {
 			const newTransaction: NewTransaction = {
 				name: valName,
 				timestamp: valDate,
-				notes: valNotes,
+				notes: valNotes ? valNotes : null,
 				amount: parseFloat(valAmount),
 				category_id: valCategory ? parseInt(valCategory) : null,
 				account_id: valAccount ? parseInt(valAccount) : null,
@@ -162,30 +162,10 @@ export function NewTransaction({ context }: NewTransactionProps) {
 	}
 
 	function updateActList() {
-		const apiUrl = 'http://localhost:3000/api/getallaccounts'
-		const data = {
-			username: context.username,
-			token: context.token,
-		}
-		const headers = {
-			'Content-Type': 'application/json',
-		}
-		const requestOptions = {
-			method: 'POST',
-			headers,
-			body: JSON.stringify(data),
-		}
-		fetch(apiUrl, requestOptions)
-			.then((res) => {
-				if (res.ok) {
-					return res.json()
-				} else {
-					throw new Error(res.statusText)
-				}
-			})
-			.then((data) => {
+		fetchAccounts(context)
+			.then((accounts) => {
 				setActList(
-					data.accounts.map((account: AccountLite) => {
+					accounts.map((account: AccountLite) => {
 						return (
 							<option value={account.account_id}>
 								{account.name}
@@ -235,30 +215,10 @@ export function NewTransaction({ context }: NewTransactionProps) {
 	}
 
 	function updateCatList() {
-		const apiUrl = 'http://localhost:3000/api/getallcategories'
-		const data = {
-			username: context.username,
-			token: context.token,
-		}
-		const headers = {
-			'Content-Type': 'application/json',
-		}
-		const requestOptions = {
-			method: 'POST',
-			headers,
-			body: JSON.stringify(data),
-		}
-		fetch(apiUrl, requestOptions)
-			.then((res) => {
-				if (res.ok) {
-					return res.json()
-				} else {
-					throw new Error(res.statusText)
-				}
-			})
-			.then((data) => {
+		fetchCategories(context)
+			.then((categories) => {
 				setCatList(
-					data.categories.map((category: CategoryLite) => {
+					categories.map((category: CategoryLite) => {
 						return (
 							<option value={category.category_id}>
 								{category.name}
