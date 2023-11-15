@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom'
 import { useRef } from 'react'
 import { ReactComponent as UsernameIcon } from '../../assets/profile.svg'
 import { ReactComponent as PasswordIcon } from '../../assets/password.svg'
+import { createUser } from '../../api'
 
 export function CreateAccountPage() {
 	const usernameInputRef = useRef<HTMLInputElement>(null)
@@ -46,12 +47,12 @@ export function CreateAccountPage() {
 		}
 	}
 
-	function createUser() {
+	function handleCreateUser() {
+		const username = usernameInputRef.current!.value
+		const password = passwordInputRef.current!.value
+		const passwordConfirm = passwordConfirmInputRef.current!.value
 		// Check if password matches confirmation
-		if (
-			passwordInputRef.current!.value !==
-			passwordConfirmInputRef.current!.value
-		) {
+		if (password !== passwordConfirm) {
 			setStatus(true, "Password doesn't match password confirmation.")
 			setErrors(false, true, true)
 			return
@@ -60,7 +61,7 @@ export function CreateAccountPage() {
 		}
 
 		// Check username length minimum
-		if (usernameInputRef.current!.value.length <= MIN_INPUT_LENGTH) {
+		if (username.length <= MIN_INPUT_LENGTH) {
 			setErrors(true, false, false)
 			setStatus(
 				true,
@@ -71,7 +72,7 @@ export function CreateAccountPage() {
 			setErrors(false, false, false)
 		}
 		// Check password length minimum
-		if (passwordInputRef.current!.value.length <= MIN_INPUT_LENGTH) {
+		if (password.length <= MIN_INPUT_LENGTH) {
 			setErrors(false, true, false)
 			setStatus(
 				true,
@@ -82,29 +83,10 @@ export function CreateAccountPage() {
 			setErrors(false, false, false)
 		}
 
-		// Make API Call
-		const apiUrl = 'http://localhost:3000/api/createuser'
-		const data = {
-			username: usernameInputRef.current!.value,
-			password: passwordInputRef.current!.value,
-		}
-		const headers = {
-			'Content-Type': 'application/json',
-		}
-		const requestOptions = {
-			method: 'POST',
-			headers,
-			body: JSON.stringify(data),
-		}
-
-		fetch(apiUrl, requestOptions)
-			.then((res) => {
-				if (res.ok) {
-					setStatus(false, 'Account created.')
-					setErrors(false, false, false)
-				} else {
-					throw new Error(res.statusText)
-				}
+		createUser({ username, password })
+			.then(() => {
+				setStatus(false, 'Account created.')
+				setErrors(false, false, false)
 			})
 			.catch((err) => {
 				if (err.message === 'ERROR_DUPLICATE_USERNAME') {
@@ -243,7 +225,7 @@ export function CreateAccountPage() {
 				</div>
 
 				<div className='status-text' ref={statusDivRef} />
-				<button onClick={createUser}>CREATE ACCOUNT</button>
+				<button onClick={handleCreateUser}>CREATE ACCOUNT</button>
 				<hr />
 
 				<Link to='/authentication/login' className='button-like'>

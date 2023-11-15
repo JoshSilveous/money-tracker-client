@@ -1,3 +1,5 @@
+export { loginUser } from './prod/loginUser'
+export { createUser } from './prod/createUser'
 export { fetchAccounts } from './prod/fetchAccounts'
 export { fetchCategories } from './prod/fetchCategories'
 export { fetchDisplayData } from './prod/fetchDisplayData'

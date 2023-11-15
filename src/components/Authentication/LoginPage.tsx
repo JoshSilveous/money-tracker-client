@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom'
 import { useRef } from 'react'
 import { ReactComponent as UsernameIcon } from '../../assets/profile.svg'
 import { ReactComponent as PasswordIcon } from '../../assets/password.svg'
+import { loginUser } from '../../api'
 interface LoginPageProps {
 	setSessionInfo: React.Dispatch<
 		React.SetStateAction<{
@@ -38,7 +39,7 @@ export function LoginPage({ setSessionInfo }: LoginPageProps) {
 		}
 	}
 
-	function loginUser() {
+	function handleLoginUser() {
 		const username = usernameInputRef.current!.value
 		const password = passwordInputRef.current!.value
 
@@ -52,52 +53,8 @@ export function LoginPage({ setSessionInfo }: LoginPageProps) {
 			setErrors(false, false)
 		}
 
-		const apiUrl = 'http://localhost:3000/api/loginuser'
-		const data = {
-			username: username,
-			password: password,
-		}
-		const headers = {
-			'Content-Type': 'application/json',
-		}
-		const requestOptions = {
-			method: 'POST',
-			headers,
-			body: JSON.stringify(data),
-		}
-
-		fetch(apiUrl, requestOptions)
-			.then((res) => {
-				if (res.ok) {
-					setErrors(false, false)
-					setStatus(
-						false,
-						'Login successful. Redirecting you shortly...'
-					)
-					return res.json()
-				} else {
-					throw new Error(res.statusText)
-					if (res.statusText === 'ERROR_INCORRECT_USERNAME') {
-						setErrors(true, false)
-						setStatus(
-							true,
-							`Username "${username}" doesn't exist in our database.`
-						)
-					} else if (res.statusText === 'ERROR_INCORRECT_PASSWORD') {
-						setErrors(false, true)
-						setStatus(true, 'Incorrect password.')
-					} else {
-						setErrors(false, false)
-						setStatus(
-							true,
-							`Unexpected server error: ${res.statusText}`
-						)
-					}
-				}
-			})
-			.then((data) => {
-				setSessionInfo({ username: username, token: data.token })
-			})
+		loginUser({ username, password })
+			.then((token) => setSessionInfo({ username, token }))
 			.catch((err) => {
 				if (err.message === 'ERROR_INCORRECT_USERNAME') {
 					setErrors(true, false)
@@ -214,7 +171,7 @@ export function LoginPage({ setSessionInfo }: LoginPageProps) {
 				</div>
 
 				<div className='status-text' ref={statusDivRef} />
-				<button onClick={loginUser}>LOGIN</button>
+				<button onClick={handleLoginUser}>LOGIN</button>
 				<hr />
 
 				<Link
