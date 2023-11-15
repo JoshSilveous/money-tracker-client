@@ -1,18 +1,16 @@
-export function insertCategory(context: Context, newCategory: NewCategory) {
-	const apiUrl = 'http://localhost:3000/api/insertcategory'
+import { API_URL } from '../API_URL'
 
-	const data = {
-		username: context.username,
-		token: context.token,
-		payload: newCategory,
-	}
-	const headers = {
-		'Content-Type': 'application/json',
-	}
-	const requestOptions = {
+export function insertCategory(context: Context, newCategory: NewCategory) {
+	const apiUrl = API_URL + 'insertcategory'
+
+	const headers: HeadersInit = [
+		['Content-Type', 'application/json'],
+		['authorization', `Bearer ${context.token}`],
+	]
+	const requestOptions: RequestInit = {
 		method: 'POST',
 		headers,
-		body: JSON.stringify(data),
+		body: JSON.stringify(newCategory),
 	}
 	return fetch(apiUrl, requestOptions)
 		.then((res) => {

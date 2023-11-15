@@ -1,3 +1,5 @@
+import { API_URL } from '../API_URL'
+
 /**
  * Retrieves transaction data from the database, in `DisplayTransaction`
  * format, based on the provided `PageSettings`.
@@ -10,20 +12,19 @@ export function fetchDisplayData(
 	context: Context,
 	pageSettings: PageSettings
 ): Promise<DisplayTransaction[]> {
-	const apiUrl = 'http://localhost:3000/api/getdisplaydata'
+	const apiUrl = API_URL + 'getdisplaydata'
 
-	const data = {
-		username: context.username,
-		token: context.token,
-		payload: pageSettings,
-	}
-	const headers = {
-		'Content-Type': 'application/json',
-	}
-	const requestOptions = {
-		method: 'POST',
+	const headers: HeadersInit = [
+		['Content-Type', 'application/json'],
+		['authorization', `Bearer ${context.token}`],
+		['res_per_page', `${pageSettings.resPerPage}`],
+		['this_page', `${pageSettings.thisPage}`],
+		['order_by', pageSettings.orderBy],
+		['order_by_direction', pageSettings.orderByDirection],
+	]
+	const requestOptions: RequestInit = {
+		method: 'GET',
 		headers,
-		body: JSON.stringify(data),
 	}
 	return fetch(apiUrl, requestOptions)
 		.then((res) => {

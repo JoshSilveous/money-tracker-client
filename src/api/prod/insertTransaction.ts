@@ -1,21 +1,19 @@
+import { API_URL } from '../API_URL'
+
 export function insertTransaction(
 	context: Context,
 	newTransaction: NewTransaction
 ) {
-	const apiUrl = 'http://localhost:3000/api/inserttransaction'
+	const apiUrl = API_URL + 'inserttransaction'
 
-	const data = {
-		username: context.username,
-		token: context.token,
-		payload: newTransaction,
-	}
-	const headers = {
-		'Content-Type': 'application/json',
-	}
-	const requestOptions = {
+	const headers: HeadersInit = [
+		['Content-Type', 'application/json'],
+		['authorization', `Bearer ${context.token}`],
+	]
+	const requestOptions: RequestInit = {
 		method: 'POST',
 		headers,
-		body: JSON.stringify(data),
+		body: JSON.stringify(newTransaction),
 	}
 	return fetch(apiUrl, requestOptions)
 		.then((res) => {

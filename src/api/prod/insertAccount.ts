@@ -1,18 +1,16 @@
-export function insertAccount(context: Context, newAccount: NewAccount) {
-	const apiUrl = 'http://localhost:3000/api/insertaccount'
+import { API_URL } from '../API_URL'
 
-	const data = {
-		username: context.username,
-		token: context.token,
-		payload: newAccount,
-	}
-	const headers = {
-		'Content-Type': 'application/json',
-	}
-	const requestOptions = {
+export function insertAccount(context: Context, newAccount: NewAccount) {
+	const apiUrl = API_URL + 'insertaccount'
+
+	const headers: HeadersInit = [
+		['Content-Type', 'application/json'],
+		['authorization', `Bearer ${context.token}`],
+	]
+	const requestOptions: RequestInit = {
 		method: 'POST',
 		headers,
-		body: JSON.stringify(data),
+		body: JSON.stringify(newAccount),
 	}
 	return fetch(apiUrl, requestOptions)
 		.then((res) => {

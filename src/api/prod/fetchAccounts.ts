@@ -1,17 +1,15 @@
-export function fetchAccounts(context: Context): Promise<AccountLite[]> {
-	const apiUrl = 'http://localhost:3000/api/getallaccounts'
+import { API_URL } from '../API_URL'
 
-	const data = {
-		username: context.username,
-		token: context.token,
-	}
-	const headers = {
-		'Content-Type': 'application/json',
-	}
-	const requestOptions = {
-		method: 'POST',
+export function fetchAccounts(context: Context): Promise<AccountLite[]> {
+	const apiUrl = API_URL + 'getallaccounts'
+
+	const headers: HeadersInit = [
+		['Content-Type', 'application/json'],
+		['authorization', `Bearer ${context.token}`],
+	]
+	const requestOptions: RequestInit = {
+		method: 'GET',
 		headers,
-		body: JSON.stringify(data),
 	}
 	return fetch(apiUrl, requestOptions)
 		.then((res) => {
