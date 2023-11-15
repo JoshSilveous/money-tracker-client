@@ -3,6 +3,7 @@ import { useRef } from 'react'
 import { ReactComponent as UsernameIcon } from '../../assets/profile.svg'
 import { ReactComponent as PasswordIcon } from '../../assets/password.svg'
 import { loginUser } from '../../api'
+import { loginUser } from '../../api'
 interface LoginPageProps {
 	setSessionInfo: React.Dispatch<
 		React.SetStateAction<{
@@ -53,8 +54,16 @@ export function LoginPage({ setSessionInfo }: LoginPageProps) {
 			setErrors(false, false)
 		}
 
-		loginUser({ username, password })
-			.then((token) => setSessionInfo({ username, token }))
+		const credentials = {
+			username: username,
+			password: password,
+		}
+		loginUser(credentials)
+			.then((token) => {
+				setErrors(false, false)
+				setStatus(false, 'Login successful. Redirecting you shortly...')
+				setSessionInfo({ username, token })
+			})
 			.catch((err) => {
 				if (err.message === 'ERROR_INCORRECT_USERNAME') {
 					setErrors(true, false)

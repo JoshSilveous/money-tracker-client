@@ -3,7 +3,6 @@ interface Context {
 	token: string
 	refreshToken: (newToken: string) => void
 }
-
 interface Transaction {
 	transaction_id: number
 	name: string

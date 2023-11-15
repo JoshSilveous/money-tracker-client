@@ -1,3 +1,4 @@
+import { insertTransaction } from '../../../api'
 export function insertTestData(
 	context: Context,
 	devCatsList: CategoryLite[],
@@ -273,39 +274,5 @@ export function insertTestData(
 		},
 	]
 
-	function insertTransaction(transaction: NewTransaction) {
-		const apiUrl = 'http://localhost:3000/api/inserttransaction'
-
-		const data = {
-			username: context.username,
-			token: context.token,
-			payload: transaction,
-		}
-		const headers = {
-			'Content-Type': 'application/json',
-		}
-		const requestOptions = {
-			method: 'POST',
-			headers,
-			body: JSON.stringify(data),
-		}
-		fetch(apiUrl, requestOptions)
-			.then((res) => {
-				if (res.ok) {
-					return res.json()
-				} else {
-					throw new Error(res.statusText)
-				}
-			})
-			.then((data) => {
-				console.log(
-					`Transaction "${transaction.name}" created, transaction_id is ${data.transaction_id}.`
-				)
-			})
-			.catch((err) => {
-				console.error(err)
-			})
-	}
-
-	testData.forEach((item) => insertTransaction(item))
+	testData.forEach((item) => insertTransaction(context, item))
 }

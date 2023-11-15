@@ -74,7 +74,6 @@ export function NewAccount({ context, handleCreate }: NewAccountProps) {
 						'Your session has expired. Redirecting you to the login page.'
 					)
 					setTimeout(() => {
-						console.log('timeout triggered')
 						window.location.pathname = 'authentication/login'
 					}, 1500)
 				} else if (

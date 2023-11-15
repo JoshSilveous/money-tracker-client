@@ -1,5 +1,10 @@
 import { API_URL } from '../API_URL'
 
+/**
+ * Retrieves all accounts in a user's file from the database.
+ * @param context The {@linkcode Context} object
+ * @returns A promise, which resolves to a {@linkcode AccountLite AccountLite[]}
+ */
 export function fetchAccounts(context: Context): Promise<AccountLite[]> {
 	const apiUrl = API_URL + 'getallaccounts'
 
@@ -13,7 +18,6 @@ export function fetchAccounts(context: Context): Promise<AccountLite[]> {
 	}
 	return fetch(apiUrl, requestOptions)
 		.then((res) => {
-			console.log('res recieved:', res)
 			if (res.ok) {
 				return res.json()
 			} else {

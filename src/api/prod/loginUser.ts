@@ -1,5 +1,10 @@
 import { API_URL } from '../API_URL'
 
+/**
+ * Attempts to validate provided credentials. If credentials are correct, returns the new token.
+ * @param credentials The {@linkcode Credentials} object (username and password)
+ * @returns The new session's `Token` as a string
+ */
 export function loginUser(credentials: UserCredentials) {
 	const apiUrl = API_URL + 'loginuser'
 
